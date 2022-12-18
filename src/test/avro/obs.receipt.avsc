@@ -1,0 +1,36 @@
+{
+    "doc": "A Receipt encapsulates all relevant data associated with the apportionment of an Order.",
+    "type": "record",
+    "namespace": "io.github.leofuso.obs.demo.events",
+    "name": "Receipt",
+    "fields": [
+        {
+            "doc": "UUID v4 compliant identification for an Order.",
+            "name": "order",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "doc": "Found deficit after performing all Statement Line apportioning associated with an Order. It can be zero but never negative.",
+            "name": "deficit",
+            "type": {
+                "type": "bytes",
+                "logicalType": "decimal",
+                "precision": 15,
+                "scale": 3
+            }
+        },
+        {
+            "doc": "Baggage is a context-sensitive Key-Value carrier of business-unrelated data.",
+            "name": "baggage",
+            "type": {
+                "type": "map",
+                "values": "string",
+                "default": {}
+            },
+            "default": {}
+        }
+    ]
+}

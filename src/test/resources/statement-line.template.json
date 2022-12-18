@@ -1,0 +1,18 @@
+{
+    "transaction": "53a50a63-93ba-5ffd-b8cf-981a73947a7f",
+    "source": {
+        "namespace": "74074428-7c4d-4922-b8fd-7c32e9ae499b",
+        "domain": "obs.demo"
+    },
+    "account": "97175496-7cb2-468e-a812-015f7a44450f",
+    "details": {
+        "annotation": "Completed by the partner in less than 15 minutes.",
+        "department": "ROUTE"
+    },
+    "operation": "CREDIT",
+    "amount": "\u004c\u006d",
+    "competence": 1671339115565970,
+    "baggage": {
+        "orders": "f1a4cfc3-b1a2-459d-ab0c-d7ac3cac42d0, 126cefe4-aab4-4bb6-9876-e245c834b0ac, 4475ad68-5c74-40bb-ae82-c79dfab3f149"
+    }
+}
