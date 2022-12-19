@@ -1,13 +1,9 @@
 package io.github.leofuso.kafka.json2avro;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import io.confluent.kafka.schemaregistry.utils.JacksonMapper;
-import io.github.leofuso.kafka.json2avro.fixture.JsonParameterResolver;
-import io.github.leofuso.kafka.json2avro.fixture.SchemaParameterResolver;
-import io.github.leofuso.kafka.json2avro.fixture.annotation.JsonParameter;
-import io.github.leofuso.kafka.json2avro.fixture.annotation.SchemaParameter;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.UUID;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
@@ -18,10 +14,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.UUID;
+import io.github.leofuso.kafka.json2avro.fixture.JsonParameterResolver;
+import io.github.leofuso.kafka.json2avro.fixture.SchemaParameterResolver;
+import io.github.leofuso.kafka.json2avro.fixture.annotation.JsonParameter;
+import io.github.leofuso.kafka.json2avro.fixture.annotation.SchemaParameter;
+import io.github.leofuso.kafka.json2avro.internal.ObjectMapperFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,11 +30,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith({ SchemaParameterResolver.class, JsonParameterResolver.class })
 class JsonAvroMapperTest {
 
-    private JsonAvroMapper mapper;
+    private JsonMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mapper = new JsonAvroMapper();
+        final JsonMapperFactory factory = JsonMapperFactory.get();
+        mapper = factory.produce();
     }
 
     @Test
@@ -45,7 +47,7 @@ class JsonAvroMapperTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
-            @JsonParameter(location = "statement-line.template.json") String json,
+            @JsonParameter(location = "statement-line.v2.template.json") String json,
             @SchemaParameter(location = "statement-line.schema.json") Schema schema
     ) {
 
@@ -53,7 +55,7 @@ class JsonAvroMapperTest {
         final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
 
         /* When */
-        final GenericData.Record record = mapper.toGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
 
         /* Then */
         assertThat(record)
@@ -103,14 +105,16 @@ class JsonAvroMapperTest {
     ) throws JsonProcessingException {
 
         /* Given */
-        final JsonNode originalJsonNode = JacksonMapper.INSTANCE.readTree(json);
+        final ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
+        final JsonNode originalJsonNode = objectMapper.readTree(json);
 
         final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        final GenericData.Record record = mapper.toGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
 
         /* When */
-        final String parsedJson = mapper.toJson(record);
-        final JsonNode parsedJsonNode = JacksonMapper.INSTANCE.readTree(parsedJson);
+        final String parsedJson = mapper.asJsonNode(record)
+                .asText();
+        final JsonNode parsedJsonNode = objectMapper.readTree(parsedJson);
 
         /* Then */
         assertThat(parsedJsonNode)
@@ -131,13 +135,14 @@ class JsonAvroMapperTest {
     ) throws JsonProcessingException {
 
         /* Given */
-        final JsonNode originalJsonNode = JacksonMapper.INSTANCE.readTree(json);
+        final ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
+        final JsonNode originalJsonNode = objectMapper.readTree(json);
 
         final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        final GenericData.Record record = mapper.toGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
 
         /* When */
-        final JsonNode parsedJsonNode = mapper.toJsonNode(record);
+        final JsonNode parsedJsonNode = mapper.asJsonNode(record);
 
         /* Then */
         assertThat(parsedJsonNode)
