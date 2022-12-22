@@ -1,11 +1,18 @@
 package org.apache.avro;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.logging.log4j.core.util.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
+
+    private static final Logger logger = LoggerFactory.getLogger(RelaxedDecimalConversion.class);
 
     @Override
     public BigDecimal fromBytes(final ByteBuffer value, final Schema schema, final LogicalType type) {
@@ -21,12 +28,19 @@ public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
             doValidate((LogicalTypes.Decimal) type, decimal);
             return decimal;
 
-        } catch (final NumberFormatException ex) {
+        } catch (final NumberFormatException ignored) {
+            final boolean traceEnabled = logger.isTraceEnabled();
+            if (traceEnabled) {
+                logger.trace("ByteBuffer value does not parse to BigDecimal. Applying default DecimalConversion behavior.");
+            }
             return super.fromBytes(value, schema, type);
-        } catch (final AvroTypeException validationEx) {
-            throw validationEx;
+        } catch (final InvocationTargetException e) {
+            final Throwable throwable = e.getTargetException();
+            Throwables.rethrow(throwable);
+            return null; /* Unreacheable code */
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            final String errorMessage = "Conversion failure while converting from Byte[] %s to BigDecimal Logical type.".formatted(value);
+            throw new AvroTypeException(errorMessage, e);
         }
     }
 
@@ -38,10 +52,13 @@ public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
             doValidate((LogicalTypes.Decimal) type, decimal);
             return decimal;
 
-        } catch (final AvroTypeException validationEx) {
-            throw validationEx;
+        } catch (final InvocationTargetException e) {
+            final Throwable throwable = e.getTargetException();
+            Throwables.rethrow(throwable);
+            return null; /* Unreacheable code */
         } catch (final Exception e) {
-            throw new AvroTypeException("BigDecimal value violates logical type.", e);
+            final String errorMessage = "Conversion failure while converting from Double %s to BigDecimal Logical type.".formatted(value);
+            throw new AvroTypeException(errorMessage, e);
         }
     }
 
@@ -56,10 +73,13 @@ public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
             doValidate(decimalType, decimal);
             return decimal;
 
-        } catch (final AvroTypeException validationEx) {
-            throw validationEx;
+        } catch (final InvocationTargetException e) {
+            final Throwable throwable = e.getTargetException();
+            Throwables.rethrow(throwable);
+            return null; /* Unreacheable code */
         } catch (final Exception e) {
-            throw new AvroTypeException("BigDecimal value violates logical type.", e);
+            final String errorMessage = "Conversion failure while converting from Integer %s to BigDecimal Logical type.".formatted(value);
+            throw new AvroTypeException(errorMessage, e);
         }
     }
 
