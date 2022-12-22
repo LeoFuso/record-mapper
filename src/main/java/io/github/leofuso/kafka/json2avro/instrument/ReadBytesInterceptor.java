@@ -40,11 +40,17 @@ public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> 
             case VALUE_STRING -> {
                 final String text = in.getText();
                 byte[] result = text.getBytes(StandardCharsets.ISO_8859_1);
+                final ByteBuffer value = ByteBuffer.wrap(result);
                 in.nextToken();
-                yield ByteBuffer.wrap(result);
+                yield value;
             }
-            case VALUE_NUMBER_INT, VALUE_NUMBER_FLOAT -> {
+            case VALUE_NUMBER_FLOAT -> {
                 final double value = in.getDoubleValue();
+                in.nextToken();
+                yield value;
+            }
+            case VALUE_NUMBER_INT -> {
+                final int value = in.getIntValue();
                 in.nextToken();
                 yield value;
             }

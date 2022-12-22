@@ -94,11 +94,14 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
                 case FIXED -> conversion.fromFixed((GenericFixed) datum, schema, type);
                 case STRING -> conversion.fromCharSequence((CharSequence) datum, schema, type);
                 case BYTES -> {
-                    if (datum instanceof ByteBuffer byteBuffer) {
-                        yield conversion.fromBytes(byteBuffer, schema, type);
+                    if (datum instanceof ByteBuffer value) {
+                        yield conversion.fromBytes(value, schema, type);
                     }
-                    if (datum instanceof Double doubleValue) {
-                        yield conversion.fromDouble(doubleValue, schema, type);
+                    if (datum instanceof Double value) {
+                        yield conversion.fromDouble(value, schema, type);
+                    }
+                    if (datum instanceof Integer value) {
+                        yield conversion.fromInt(value, schema, type);
                     }
                      yield datum;
                 }
