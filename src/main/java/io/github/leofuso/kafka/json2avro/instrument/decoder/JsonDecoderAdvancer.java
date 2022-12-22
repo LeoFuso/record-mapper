@@ -4,6 +4,6 @@ import org.apache.avro.io.parsing.Symbol;
 
 public interface JsonDecoderAdvancer {
 
-    void advance(Symbol symbol);
+    void doAdvance(Symbol symbol);
 
 }

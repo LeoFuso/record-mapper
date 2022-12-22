@@ -8,15 +8,10 @@ import org.apache.avro.generic.GenericData;
 
 import io.github.leofuso.kafka.json2avro.JsonMapper;
 import io.github.leofuso.kafka.json2avro.JsonMapperFactory;
-import io.github.leofuso.kafka.json2avro.instrument.ByteBuddySetup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class InstrumentedJsonMapperFactory implements JsonMapperFactory {
-
-    public InstrumentedJsonMapperFactory() {
-        new ByteBuddySetup().init();
-    }
 
     @Override
     public JsonMapper produce(Conversion<?>... additional) {

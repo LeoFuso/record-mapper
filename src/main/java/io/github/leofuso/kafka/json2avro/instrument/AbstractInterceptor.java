@@ -1,28 +1,32 @@
 package io.github.leofuso.kafka.json2avro.instrument;
 
+import java.util.Objects;
+import java.util.concurrent.Callable;
+
 import org.apache.avro.io.ResolvingDecoder;
 
-import java.lang.reflect.Method;
+public abstract class AbstractInterceptor<T> implements Interceptor {
 
-public abstract class AbstractInterceptor implements ProxyConfiguration.Interceptor {
-
+    private final Callable<T> original;
     private final ResolvingDecoder self;
-    private final Method superMethod;
 
-    protected AbstractInterceptor(final ResolvingDecoder self, final Method superMethod) {
-        this.self = self;
-        this.superMethod = superMethod;
+    protected AbstractInterceptor(final Callable<T> original) {
+        this.original = Objects.requireNonNull(original, "Callable<T> [original] is required.");
+        this.self = null;
     }
 
-
-    @Override
-    public Method superMethod() {
-        return superMethod;
+    protected AbstractInterceptor(final ResolvingDecoder self, final Callable<T> original) {
+        this.original = Objects.requireNonNull(original, "Callable<T> [original] is required.");
+        this.self = Objects.requireNonNull(self, "ResolvingDecoder [self] is required.");
     }
 
     @Override
-    public ResolvingDecoder getResolvingDecoder() {
+    public ResolvingDecoder getSelf() {
         return self;
     }
 
+    @Override
+    public Callable<?> getOriginal() {
+        return original;
+    }
 }

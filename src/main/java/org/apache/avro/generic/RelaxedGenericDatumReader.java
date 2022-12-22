@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_BYTES_REWRITE;
+
 public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
 
     public RelaxedGenericDatumReader() {}
@@ -61,8 +63,8 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
     protected Object readBytes(final Object old, final Decoder in) throws IOException {
         try {
             final Class<? extends Decoder> decoderClass = in.getClass();
-            final Method relaxedReadBytesMethod = decoderClass.getMethod("relaxedReadBytes", ByteBuffer.class);
-            return relaxedReadBytesMethod.invoke(in, old instanceof ByteBuffer byteBuffer ? byteBuffer : null);
+            final Method readBytes = decoderClass.getMethod(READ_BYTES_REWRITE, ByteBuffer.class);
+            return readBytes.invoke(in, old instanceof ByteBuffer byteBuffer ? byteBuffer : null);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new IOException(e);
         }

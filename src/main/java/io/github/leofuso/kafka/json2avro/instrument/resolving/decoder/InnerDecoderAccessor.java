@@ -4,11 +4,6 @@ import org.apache.avro.io.Decoder;
 
 public interface InnerDecoderAccessor {
 
-    Decoder accessDecoder();
-
-    @SuppressWarnings("unchecked")
-    default <T extends Decoder> T accessTypedDecoder() {
-        return (T) accessDecoder();
-    }
+    <T extends Decoder> T accessDecoder();
 
 }
