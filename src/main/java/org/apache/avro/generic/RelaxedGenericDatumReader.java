@@ -19,6 +19,7 @@ import org.apache.avro.io.Decoder;
 import org.apache.avro.io.ResolvingDecoder;
 
 import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_BYTES_REWRITE;
+import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_INT_REWRITE;
 import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_LONG_REWRITE;
 
 public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
@@ -75,7 +76,16 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
                     yield null; /* Unreachable code */
                 }
             }
-            case INT -> readInt(old, expected, in);
+            case INT -> {
+                try {
+                    final Class<? extends Decoder> decoderClass = in.getClass();
+                    final Method readInt = decoderClass.getMethod(READ_INT_REWRITE);
+                    yield readInt.invoke(in);
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                    Throwables.handleReflectionException(e);
+                    yield null; /* Unreachable code */
+                }
+            }
             case LONG -> {
                 try {
                     final Class<? extends Decoder> decoderClass = in.getClass();
@@ -130,7 +140,15 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
                     }
                     yield datum;
                 }
-                case INT -> conversion.fromInt((Integer) datum, schema, type);
+                case INT -> {
+                    if (datum instanceof Integer value) {
+                        yield conversion.fromInt(value, schema, type);
+                    }
+                    if (datum instanceof CharSequence value) {
+                        yield conversion.fromCharSequence(value, schema, type);
+                    }
+                    yield datum;
+                }
                 case LONG -> {
                     if (datum instanceof Long value) {
                         yield conversion.fromLong(value, schema, type);

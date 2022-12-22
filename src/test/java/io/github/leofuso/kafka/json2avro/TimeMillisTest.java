@@ -16,15 +16,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("Timestamp with microsecond precision LogicalType unit tests")
+@DisplayName("Time with millisecond precision LogicalType unit tests")
 @ExtendWith({ SchemaParameterResolver.class, JsonParameterResolver.class })
-public class TimestampMicrosTest {
+public class TimeMillisTest {
 
     private static JsonMapper mapper;
 
@@ -38,14 +38,14 @@ public class TimestampMicrosTest {
     @Test
     @DisplayName(
             """
-                    Given a long-typed timestamp value,
+                    Given an int-typed time value,
                     When converted to GenericData.Record,
-                    Then should apply the corresponding value to Instant timestamp field
+                    Then should apply the corresponding value to LocalTime time field
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
-            @JsonParameter(location = "timestamp/micros/timestamp.long.json") String json
+            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @JsonParameter(location = "time/millis/time.int.json") String json
     ) {
 
         /* Given */
@@ -57,29 +57,28 @@ public class TimestampMicrosTest {
         /* Then */
         assertThat(record)
                 .isNotNull()
-                .extracting(i -> i.get("timestamp"))
-                .asInstanceOf(InstanceOfAssertFactories.type(Instant.class))
-                .isEqualTo(Instant.parse("2022-12-18T04:51:55.565970Z"));
+                .extracting(i -> i.get("time"))
+                .asInstanceOf(InstanceOfAssertFactories.type(LocalTime.class))
+                .isEqualTo(LocalTime.parse("04:51:55.565"));
     }
 
     @Test
     @DisplayName(
             """
-                    Given an invalid long-typed timestamp value,
+                    Given an invalid int-typed time value,
                     When converting to GenericData.Record,
-                    Then should fail the Instant amount field convertion
+                    Then should fail the LocalTime time field convertion
                     """
     )
     void b8aec7e506ce410bb646f517cf71784(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
-            @JsonParameter(location = "timestamp/micros/timestamp.invalid.long.json") String json
+            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @JsonParameter(location = "time/millis/time.invalid.int.json") String json
     ) {
 
         /* Given */
         final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        final String expectedError = "Numeric value (9223372036854775808) out of range of long (-9223372036854775808 - " +
-                "9223372036854775807)\n" +
-                " at [Source: (ByteArrayInputStream); line: 1, column: 33]";
+        final String expectedError = "Numeric value (2147483648) out of range of int (-2147483648 - 2147483647)\n" +
+                " at [Source: (ByteArrayInputStream); line: 1, column: 19]";
 
         /* When then */
         assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
@@ -92,12 +91,12 @@ public class TimestampMicrosTest {
             """
                     Given a standard string value (ISO-88601),
                     When converted to GenericData.Record,
-                    Then should apply the corresponding value to Instant timestamp field
+                    Then should apply the corresponding value to LocalTime time field
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
-            @JsonParameter(location = "timestamp/micros/timestamp.ISO-8601.json") String json
+            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @JsonParameter(location = "time/millis/time.ISO-8601.json") String json
     ) {
 
         /* Given */
@@ -109,9 +108,9 @@ public class TimestampMicrosTest {
         /* Then */
         assertThat(record)
                 .isNotNull()
-                .extracting(i -> i.get("timestamp"))
-                .asInstanceOf(InstanceOfAssertFactories.type(Instant.class))
-                .isEqualTo(Instant.parse("2022-12-18T04:51:55.565970Z"));
+                .extracting(i -> i.get("time"))
+                .asInstanceOf(InstanceOfAssertFactories.type(LocalTime.class))
+                .isEqualTo(LocalTime.parse("04:51:55.565"));
     }
 
     @Test
@@ -119,12 +118,12 @@ public class TimestampMicrosTest {
             """
                     Given an invalid standard string value (ISO-88601),
                     When converting to GenericData.Record,
-                    Then should fail the Instant amount field convertion
+                    Then should fail the LocalTime time field convertion
                     """
     )
     void b8aec7e506ce410bb646f517cf71785(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
-            @JsonParameter(location = "timestamp/micros/timestamp.invalid.ISO-8601.json") String json
+            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @JsonParameter(location = "time/millis/time.invalid.ISO-8601.json") String json
     ) {
 
         /* Given */
@@ -133,20 +132,20 @@ public class TimestampMicrosTest {
         /* When then */
         assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
                 .isInstanceOf(DateTimeParseException.class)
-                .hasMessage("Text 'Tue, 3 Jun 2008 11:05:30 GMT' could not be parsed at index 0");
+                .hasMessage("Text '12 PM' could not be parsed at index 2");
     }
 
     @Test
     @DisplayName(
             """
-                    Given a zeroed long-typed timestamp value
+                    Given a zeroed int-typed timestamp value
                     When converted to GenericData.Record,
-                    Then should apply the corresponding value to Instant timestamp field
+                    Then should apply the corresponding value to LocalTime time field
                     """
     )
     void b8aec7e506ce410bb646f517cf717842(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
-            @JsonParameter(location = "timestamp/micros/timestamp.zeroed.long.json") String json
+            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @JsonParameter(location = "time/millis/time.zeroed.int.json") String json
     ) {
 
         /* Given */
@@ -158,21 +157,21 @@ public class TimestampMicrosTest {
         /* Then */
         assertThat(record)
                 .isNotNull()
-                .extracting(i -> i.get("timestamp"))
+                .extracting(i -> i.get("time"))
                 .isNull();
     }
 
     @Test
     @DisplayName(
             """
-                    Given a null long-typed timestamp value
+                    Given a null int-typed timestamp value
                     When converted to GenericData.Record,
-                    Then should apply the corresponding value to Instant timestamp field
+                    Then should apply the corresponding value to LocalTime time field
                     """
     )
     void b8aec7e506ce410bb646f517cf717840(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
-            @JsonParameter(location = "timestamp/micros/timestamp.null.long.json") String json
+            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @JsonParameter(location = "time/millis/time.null.int.json") String json
     ) {
 
         /* Given */
@@ -184,7 +183,7 @@ public class TimestampMicrosTest {
         /* Then */
         assertThat(record)
                 .isNotNull()
-                .extracting(i -> i.get("timestamp"))
+                .extracting(i -> i.get("time"))
                 .isNull();
     }
 }

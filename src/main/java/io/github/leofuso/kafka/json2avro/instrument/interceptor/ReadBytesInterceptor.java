@@ -1,4 +1,4 @@
-package io.github.leofuso.kafka.json2avro.instrument;
+package io.github.leofuso.kafka.json2avro.instrument.interceptor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -14,12 +14,12 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> {
 
-    static Object intercept(final ResolvingDecoder self, final Object[] arguments) {
+    public static Object intercept(final ResolvingDecoder self, final Object[] arguments) {
         return new ReadBytesInterceptor(self, arguments)
                 .apply(arguments);
     }
 
-    ReadBytesInterceptor(final ResolvingDecoder self, final Object[] arguments) {
+    private ReadBytesInterceptor(final ResolvingDecoder self, final Object[] arguments) {
         super(self, () -> self.readBytes((ByteBuffer) arguments[0]));
     }
 
@@ -54,6 +54,7 @@ public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> 
                 in.nextToken();
                 yield value;
             }
+            case END_OBJECT, VALUE_NULL -> null;
             default -> throw new AvroTypeException("Expected [byte] or [number]. Got " + currentToken);
         };
     }

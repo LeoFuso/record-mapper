@@ -1,7 +1,9 @@
-package io.github.leofuso.kafka.json2avro.instrument;
+package io.github.leofuso.kafka.json2avro.instrument.interceptor;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
+
+import io.github.leofuso.kafka.json2avro.instrument.Interceptor;
 
 import org.apache.avro.io.ResolvingDecoder;
 

@@ -38,8 +38,8 @@ public class DecimalTest {
     @DisplayName(
             """
                     Given a double-typed decimal value,
-                    When converting to GenericData.Record,
-                    Then should apply the corresponding value to BigDecimal amount field
+                    When converted to GenericData.Record,
+                    Then should apply the corresponding value to the BigDecimal amount field
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
@@ -89,8 +89,8 @@ public class DecimalTest {
     @DisplayName(
             """
                     Given a stringified double-typed decimal value,
-                    When converting to GenericData.Record,
-                    Then should apply the corresponding value to BigDecimal amount field
+                    When converted to GenericData.Record,
+                    Then should apply the corresponding value to the BigDecimal amount field
                     """
     )
     void b8aec7e506ce410bb646f517cf71784d(
@@ -168,8 +168,8 @@ public class DecimalTest {
     @DisplayName(
             """
                     Given a standard decimal value (ISO-8859-1),
-                    When converting to GenericData.Record,
-                    Then should apply the corresponding value to BigDecimal amount field
+                    When converted to GenericData.Record,
+                    Then should apply the corresponding value to the BigDecimal amount field
                     """
     )
     void b8aec7e506ce410bb646f517cf71784e(
@@ -218,8 +218,8 @@ public class DecimalTest {
     @DisplayName(
             """
                     Given an int-typed decimal value,
-                    When converting to GenericData.Record,
-                    Then should apply the corresponding value to BigDecimal amount field
+                    When converted to GenericData.Record,
+                    Then should apply the corresponding value to the BigDecimal amount field
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
@@ -263,5 +263,57 @@ public class DecimalTest {
         assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
                 .isInstanceOf(AvroTypeException.class)
                 .hasMessage("Cannot encode decimal with scale 4 as scale 3 without rounding");
+    }
+
+    @Test
+    @DisplayName(
+            """
+                    Given a zeroed double-typed decimal value
+                    When converted to GenericData.Record,
+                    Then should apply the corresponding value to the BigDecimal amount field
+                    """
+    )
+    void b8aec7e506ce410bb646f517cf717844(
+            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @JsonParameter(location = "decimal/decimal.zeroed.json") String json
+    ) {
+
+        /* Given */
+        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+
+        /* When */
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+
+        /* Then */
+        assertThat(record)
+                .isNotNull()
+                .extracting(i -> i.get("amount"))
+                .isNull();
+    }
+
+    @Test
+    @DisplayName(
+            """
+                    Given a null double-typed decimal value
+                    When converted to GenericData.Record,
+                    Then should apply the corresponding value to the BigDecimal amount field
+                    """
+    )
+    void b8aec7e506ce410bb646f517cf717840(
+            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @JsonParameter(location = "decimal/decimal.null.json") String json
+    ) {
+
+        /* Given */
+        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+
+        /* When */
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+
+        /* Then */
+        assertThat(record)
+                .isNotNull()
+                .extracting(i -> i.get("amount"))
+                .isNull();
     }
 }

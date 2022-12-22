@@ -1,4 +1,4 @@
-package io.github.leofuso.kafka.json2avro.instrument;
+package io.github.leofuso.kafka.json2avro.instrument.interceptor;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public final class ReadLongInterceptor extends AbstractInterceptor<Long> {
 
-    static Object intercept(final ResolvingDecoder self) {
+    public static Object intercept(final ResolvingDecoder self) {
         return new ReadLongInterceptor(self)
                 .apply(null);
     }
@@ -48,7 +48,7 @@ public final class ReadLongInterceptor extends AbstractInterceptor<Long> {
                 in.nextToken();
                 yield value;
             }
-            case END_OBJECT -> null;
+            case END_OBJECT, VALUE_NULL -> null;
             default -> throw new AvroTypeException("Expected [CharSequence] or [number]. Got " + currentToken);
         };
     }

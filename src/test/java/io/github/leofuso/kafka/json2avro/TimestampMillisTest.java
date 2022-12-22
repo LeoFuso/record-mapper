@@ -60,7 +60,6 @@ public class TimestampMillisTest {
                 .extracting(i -> i.get("timestamp"))
                 .asInstanceOf(InstanceOfAssertFactories.type(Instant.class))
                 .isEqualTo(Instant.parse("2022-12-18T04:51:55.565Z"));
-
     }
 
     @Test
@@ -148,6 +147,32 @@ public class TimestampMillisTest {
     void b8aec7e506ce410bb646f517cf717842(
             @SchemaParameter(location = "timestamp.millis.schema.json") Schema schema,
             @JsonParameter(location = "timestamp/millis/timestamp.zeroed.long.json") String json
+    ) {
+
+        /* Given */
+        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+
+        /* When */
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+
+        /* Then */
+        assertThat(record)
+                .isNotNull()
+                .extracting(i -> i.get("timestamp"))
+                .isNull();
+    }
+
+    @Test
+    @DisplayName(
+            """
+                    Given a null long-typed timestamp value
+                    When converted to GenericData.Record,
+                    Then should apply the corresponding value to Instant timestamp field
+                    """
+    )
+    void b8aec7e506ce410bb646f517cf717840(
+            @SchemaParameter(location = "timestamp.millis.schema.json") Schema schema,
+            @JsonParameter(location = "timestamp/millis/timestamp.null.long.json") String json
     ) {
 
         /* Given */

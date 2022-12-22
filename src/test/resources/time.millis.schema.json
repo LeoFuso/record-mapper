@@ -1,0 +1,17 @@
+{
+    "type": "record",
+    "name": "TimeMillis",
+    "namespace": "io.github.leofuso.avro.tests",
+    "doc": "A simple Record containing only a time field.",
+    "fields": [
+        {
+            "name": "time",
+            "type": {
+                "type": "int",
+                "logicalType": "time-millis"
+            },
+            "doc": "A time in millisecond precision.",
+            "default": 0
+        }
+    ]
+}

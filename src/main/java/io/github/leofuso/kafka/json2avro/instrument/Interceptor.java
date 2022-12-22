@@ -7,6 +7,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.AbstractInterceptor;
+
 import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.ResolvingDecoder;
 import org.apache.avro.io.parsing.Parser;
