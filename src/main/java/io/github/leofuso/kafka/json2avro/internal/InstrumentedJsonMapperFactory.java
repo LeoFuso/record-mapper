@@ -20,7 +20,7 @@ public class InstrumentedJsonMapperFactory implements JsonMapperFactory {
         final GenericData data = new GenericData();
         data.addLogicalTypeConversion(new RelaxedDecimalConversion());
         data.addLogicalTypeConversion(new Conversions.UUIDConversion());
-        data.addLogicalTypeConversion(new TimeConversions.DateConversion());
+        data.addLogicalTypeConversion(new RelaxedTimeConversions.DateConversion());
         data.addLogicalTypeConversion(new RelaxedTimeConversions.TimeMillisConversion());
         data.addLogicalTypeConversion(new RelaxedTimeConversions.TimeMicrosConversion());
         data.addLogicalTypeConversion(new RelaxedTimeConversions.TimestampMillisConversion());

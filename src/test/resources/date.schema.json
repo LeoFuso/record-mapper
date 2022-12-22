@@ -1,0 +1,17 @@
+{
+    "type": "record",
+    "name": "Date",
+    "namespace": "io.github.leofuso.avro.tests",
+    "doc": "A simple Record containing only a date field.",
+    "fields": [
+        {
+            "name": "date",
+            "type": {
+                "type": "int",
+                "logicalType": "date"
+            },
+            "doc": "A date.",
+            "default": 0
+        }
+    ]
+}
