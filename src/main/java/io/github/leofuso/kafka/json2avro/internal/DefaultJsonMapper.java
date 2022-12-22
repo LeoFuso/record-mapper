@@ -48,7 +48,7 @@ public class DefaultJsonMapper implements JsonMapper {
             final Object object = datumReader.read(null, decoder);
             return (GenericData.Record) object;
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new AvroMappingException("Unable to parse value.", e);
         }
     }

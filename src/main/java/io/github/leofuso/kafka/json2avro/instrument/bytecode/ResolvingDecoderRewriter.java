@@ -17,6 +17,7 @@ import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.pool.TypePool;
 
 import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_BYTES_REWRITE;
+import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_LONG_REWRITE;
 
 public class ResolvingDecoderRewriter implements Function<ByteBuddy, DynamicType.Loaded<?>> {
 
@@ -56,6 +57,8 @@ public class ResolvingDecoderRewriter implements Function<ByteBuddy, DynamicType
                 )
                 .defineMethod(READ_BYTES_REWRITE, Object.class, Visibility.PUBLIC)
                 .withParameter(ByteBuffer.class, "old")
+                .intercept(MethodDelegation.to(dispatcherType))
+                .defineMethod(READ_LONG_REWRITE, Object.class, Visibility.PUBLIC)
                 .intercept(MethodDelegation.to(dispatcherType))
                 .make()
                 .load(classLoader, ClassLoadingStrategy.Default.INJECTION);

@@ -1,0 +1,17 @@
+{
+    "type": "record",
+    "name": "TimestampMillis",
+    "namespace": "io.github.leofuso.avro.tests",
+    "doc": "A simple Record containing only a timestamp field.",
+    "fields": [
+        {
+            "name": "timestamp",
+            "type": {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+            },
+            "doc": "A timestamp in microsecond precision.",
+            "default": 0
+        }
+    ]
+}

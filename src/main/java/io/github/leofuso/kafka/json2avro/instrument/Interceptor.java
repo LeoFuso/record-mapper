@@ -1,6 +1,9 @@
 package io.github.leofuso.kafka.json2avro.instrument;
 
+import javax.annotation.Nullable;
+
 import java.io.IOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
@@ -8,7 +11,10 @@ import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.ResolvingDecoder;
 import org.apache.avro.io.parsing.Parser;
 import org.apache.avro.io.parsing.Symbol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import io.github.leofuso.kafka.json2avro.exception.Throwables;
 import io.github.leofuso.kafka.json2avro.instrument.decoder.JsonDecoderAdvancer;
 import io.github.leofuso.kafka.json2avro.instrument.decoder.JsonParserAccessor;
 import io.github.leofuso.kafka.json2avro.instrument.resolving.decoder.InnerDecoderAccessor;
@@ -16,23 +22,34 @@ import io.github.leofuso.kafka.json2avro.instrument.resolving.decoder.ParserAcce
 
 import com.fasterxml.jackson.core.JsonParser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+/**
+ * An interceptor object that is responsible for invoking a proxy's method.
+ */
 public interface Interceptor extends Function<Object[], Object> {
 
     Logger logger = LoggerFactory.getLogger(Interceptor.class);
 
-    Object intercept(Object[] arguments) throws Throwable;
+    /**
+     * Intercepts a method call to a proxy.
+     *
+     * @param arguments The intercepted method arguments, nullable.
+     * @return The method's return value.
+     *
+     * @throws Throwable If the intercepted method raises an exception.
+     */
+    Object intercept(@Nullable Object[] arguments) throws Throwable;
 
     @Override
-    default Object apply(Object[] objects) {
+    default Object apply(@Nullable Object[] objects) {
         try {
             return intercept(objects);
-        } catch (Throwable e) {
+        } catch (final UndeclaredThrowableException e) {
             logger.error("Unhandled exception invokating enhanced method.", e);
             final Callable<?> original = getOriginal();
             return noop(original).apply(objects);
+        } catch (final Throwable e) {
+            Throwables.rethrowRuntimeException(e);
+            return null; /* Unreachable code */
         }
     }
 
@@ -51,6 +68,15 @@ public interface Interceptor extends Function<Object[], Object> {
             return getOriginal().call();
         }
 
+        @Override
+        public Object apply(@Nullable final Object[] objects) {
+            try {
+                return intercept(objects);
+            } catch (final Exception e) {
+                Throwables.rethrowRuntimeException(e);
+                return null; /* Uncheable code */
+            }
+        }
     }
 
     default Symbol advanceBoth(Symbol symbol) {
@@ -67,11 +93,13 @@ public interface Interceptor extends Function<Object[], Object> {
                 throw new RuntimeException(e);
             }
         }
-        throw new IllegalStateException(
-                """
-                        ResolvingDecoder is not compatible with ParserAccessor type and or \
-                        JsonDecoder is not compatible with JsonDecoderAdvancer type.
+        throw new UndeclaredThrowableException(
+                new IllegalStateException(
                         """
+                                ResolvingDecoder is not compatible with ParserAccessor type and or \
+                                JsonDecoder is not compatible with JsonDecoderAdvancer type.
+                                """
+                )
         );
     }
 
@@ -80,7 +108,9 @@ public interface Interceptor extends Function<Object[], Object> {
         if (decoder instanceof JsonParserAccessor accessor) {
             return accessor.accessJsonParser();
         }
-        throw new IllegalStateException("JsonDecoder is not compatible with JsonParserAccessor type.");
+        throw new UndeclaredThrowableException(
+                new IllegalStateException("JsonDecoder is not compatible with JsonParserAccessor type.")
+        );
     }
 
     default JsonDecoder getDecoder() {
@@ -88,7 +118,9 @@ public interface Interceptor extends Function<Object[], Object> {
         if (self instanceof InnerDecoderAccessor accessor) {
             return accessor.accessDecoder();
         }
-        throw new IllegalStateException("ResolvingDecoder is not compatible with InnerDecoderAccessor type.");
+        throw new UndeclaredThrowableException(
+                new IllegalStateException("ResolvingDecoder is not compatible with InnerDecoderAccessor type.")
+        );
     }
 
     default ResolvingDecoder getSelf() {

@@ -60,6 +60,6 @@ public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> 
 
     @Override
     public Object intercept(final Object[] arguments) throws Throwable {
-        return readBytes((ByteBuffer) arguments[0]);
+        return readBytes(arguments != null ? (ByteBuffer) arguments[0] : ByteBuffer.wrap(new byte[0]));
     }
 }

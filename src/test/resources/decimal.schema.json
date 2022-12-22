@@ -1,7 +1,7 @@
 {
     "type": "record",
-    "name": "DecimalSchema",
-    "namespace": "io.github.leofuso.kafka.tests",
+    "name": "Decimal",
+    "namespace": "io.github.leofuso.avro.tests",
     "doc": "A simple Record containing only a decimal field.",
     "fields": [
         {
