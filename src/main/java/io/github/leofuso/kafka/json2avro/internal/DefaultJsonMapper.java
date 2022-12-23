@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumWriter;
@@ -42,9 +45,10 @@ public class DefaultJsonMapper implements JsonMapper {
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             final ObjectReader reader = mapper.reader();
-            final JsonNode node = reader.readTree(valueStream);
+            final JsonNode sourceNode = reader.readTree(valueStream);
 
-            mapper.writeValue(out, node);
+            final JsonNode compatibleNode = toCompatibleNode(sourceNode, schema);
+            mapper.writeValue(out, compatibleNode);
             final byte[] nodeBytes = out.toByteArray();
 
             final ByteArrayInputStream datumReaderInput = new ByteArrayInputStream(nodeBytes);
@@ -58,6 +62,32 @@ public class DefaultJsonMapper implements JsonMapper {
         } catch (final IOException e) {
             throw new AvroMappingException("Unable to parse value.", e);
         }
+    }
+
+    private JsonNode toCompatibleNode(final JsonNode sourceNode, final Schema schema) {
+        final Schema.Type schemaType = schema.getType();
+        final boolean isNotRecord = schemaType != Schema.Type.RECORD;
+        if(isNotRecord) {
+            return sourceNode.deepCopy();
+        }
+        final ObjectNode targetNode = mapper.createObjectNode();
+        for (final Schema.Field field : schema.getFields()) {
+
+            final String name = field.name();
+            final String pathExpression = "/%s".formatted(name);
+            final JsonNode childSourceNode = sourceNode.at(pathExpression);
+
+            final JsonNodeType childSourceNodeType = childSourceNode.getNodeType();
+            final JsonNode childTargetNode = switch (childSourceNodeType) {
+                case OBJECT, ARRAY -> {
+                    final Schema fieldSchema = field.schema();
+                    yield toCompatibleNode(childSourceNode, fieldSchema);
+                }
+                default -> childSourceNode;
+            };
+            targetNode.set(name, childTargetNode);
+        }
+        return targetNode;
     }
 
     @Override

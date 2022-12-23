@@ -69,6 +69,55 @@ class JsonAvroMapperTest {
     @Test
     @DisplayName(
             """
+                    Given a friendly json template with a valid Schema and scrambled fields,
+                    When converted to GenericData.Record,
+                    Then all fields must match.
+                    """
+    )
+    void b8aec7e506ce410bb646f517cf717843(
+            @SchemaParameter(location = "statement-line.schema.avsc") Schema schema,
+            @JsonParameter(location = "statement.line/statement-line.v3.template.json") String json
+    ) {
+
+        /* Given */
+        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+
+        /* When */
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+
+        /* Then */
+        assertThatRecord(schema, record);
+    }
+
+    @Test
+    @DisplayName(
+            """
+                    Given a friendly json template with a valid Schema and missing optional field,
+                    When converted to GenericData.Record,
+                    Then all fields must match.
+                    """
+    )
+    void b8aec7e506ce410bb646f517cf717841(
+            @SchemaParameter(location = "statement-line.schema.avsc") Schema schema,
+            @JsonParameter(location = "statement.line/statement-line.v4.template.json") String json
+    ) {
+
+        /* Given */
+        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+
+        /* When */
+        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+
+        /* Then */
+        assertThat(record)
+                .isNotNull()
+                .extracting(r -> r.get("amount"))
+                .isNull();
+    }
+
+    @Test
+    @DisplayName(
+            """
                     Given a canonical-form json template with a valid Schema,
                     When converted to GenericData.Record,
                     Then all fields must match.
