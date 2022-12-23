@@ -3,14 +3,13 @@ package io.github.leofuso.kafka.json2avro.instrument.bytecode;
 import java.io.IOException;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.NamingStrategy;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.MethodGraph;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ByteCodeRewriter implements Runnable, Function<ByteBuddy, Void> {
 
@@ -51,15 +50,8 @@ public class ByteCodeRewriter implements Runnable, Function<ByteBuddy, Void> {
 
     @Override
     public void run() {
-
         final MethodGraph.Compiler compiler = MethodGraph.Compiler.Default.forJVMHierarchy();
-        final ByteBuddy byteBuddy =
-                new ByteBuddy()
-                        .with(compiler)
-                        .with(
-                                new NamingStrategy.SuffixingRandom("$$json2avro")
-                        );
-
+        final ByteBuddy byteBuddy = new ByteBuddy().with(compiler);
         new ByteCodeRewriter()
                 .apply(byteBuddy);
     }
