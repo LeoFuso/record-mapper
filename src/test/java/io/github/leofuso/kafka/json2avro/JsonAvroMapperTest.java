@@ -12,7 +12,6 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.util.Utf8;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -126,7 +125,7 @@ class JsonAvroMapperTest {
     void b8aec7e506ce410bb646f517cf71784d(
             @SchemaParameter(location = "statement-line.schema.avsc") Schema schema,
             @JsonParameter(location = "statement.line/statement-line.v1.template.json") String json
-    ) throws JsonProcessingException {
+    ) {
 
         /* Given */
         final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
