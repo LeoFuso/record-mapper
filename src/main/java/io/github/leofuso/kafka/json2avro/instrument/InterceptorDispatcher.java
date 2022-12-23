@@ -4,9 +4,9 @@ import java.lang.reflect.Method;
 
 import org.apache.avro.io.ResolvingDecoder;
 
-import io.github.leofuso.kafka.json2avro.instrument.interceptor.ReadBytesInterceptor;
-import io.github.leofuso.kafka.json2avro.instrument.interceptor.ReadIntInterceptor;
-import io.github.leofuso.kafka.json2avro.instrument.interceptor.ReadLongInterceptor;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.EnhancedReadBytes;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.EnhancedReadInt;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.EnhancedReadLong;
 
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
@@ -49,9 +49,9 @@ public class InterceptorDispatcher {
                                   @AllArguments final Object[] arguments) {
         final String methodName = invoked.getName();
         return switch (methodName) {
-            case READ_BYTES_REWRITE -> ReadBytesInterceptor.intercept(self, arguments);
-            case READ_LONG_REWRITE -> ReadLongInterceptor.intercept(self);
-            case READ_INT_REWRITE -> ReadIntInterceptor.intercept(self);
+            case READ_INT_REWRITE -> Interceptor.intercept(EnhancedReadInt.class, self, arguments);
+            case READ_LONG_REWRITE -> Interceptor.intercept(EnhancedReadLong.class, self, arguments);
+            case READ_BYTES_REWRITE -> Interceptor.intercept(EnhancedReadBytes.class, self, arguments);
             default -> throw new UnsupportedOperationException("Unexpected call on an unknown method.");
         };
     }

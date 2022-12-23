@@ -4,8 +4,8 @@ import java.util.function.Function;
 
 import org.apache.avro.io.parsing.Symbol;
 
-import io.github.leofuso.kafka.json2avro.instrument.decoder.JsonDecoderAdvancer;
-import io.github.leofuso.kafka.json2avro.instrument.decoder.JsonParserAccessor;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.accessors.ParsingAdvancer;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.accessors.JsonParserAccessor;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.type.TypeDescription;
@@ -41,13 +41,13 @@ public class JsonDecoderRewriter implements Function<ByteBuddy, DynamicType.Load
                         FieldAccessor.ofField("in")
                                 .in(jsonDecoderType)
                 )
-                .implement(JsonDecoderAdvancer.class)
+                .implement(ParsingAdvancer.class)
                 .intercept(
                         MethodCall.invoke(
                                         named("advance")
                                                 .and(takesArgument(0, Symbol.class))
                                                 .and(isPrivate())
-                                                .and(not(isDeclaredBy(JsonDecoderAdvancer.class)))
+                                                .and(not(isDeclaredBy(ParsingAdvancer.class)))
                                 )
                                 .withAllArguments()
                 )

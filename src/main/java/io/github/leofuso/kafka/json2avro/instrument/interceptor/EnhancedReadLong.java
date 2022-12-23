@@ -3,6 +3,7 @@ package io.github.leofuso.kafka.json2avro.instrument.interceptor;
 import java.io.IOException;
 
 import org.apache.avro.AvroTypeException;
+import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.ResolvingDecoder;
 import org.apache.avro.io.parsing.Parser;
 import org.apache.avro.io.parsing.Symbol;
@@ -10,28 +11,30 @@ import org.apache.avro.io.parsing.Symbol;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public final class ReadIntInterceptor extends AbstractInterceptor<Integer> {
+public final class EnhancedReadLong extends AbstractInterceptor<Long> {
 
-    public static Object intercept(final ResolvingDecoder self) {
-        return new ReadIntInterceptor(self)
-                .apply(null);
+    public EnhancedReadLong(final ResolvingDecoder self, final Object[] ignored){
+        super(self, self::readLong);
     }
 
-    private ReadIntInterceptor(final ResolvingDecoder self) {
-        super(self, self::readInt);
-    }
-
-    private Object readInt() throws IOException {
+    private Object readLong() throws IOException {
         final Parser parser = parser(Parser.class);
+        final JsonDecoder in = in();
 
-        parser.advance(Symbol.INT);
-        return doReadInt();
+        final Symbol actual = parser.advance(Symbol.LONG);
+        if (actual == Symbol.INT) {
+            return in.readInt();
+        } else if (actual == Symbol.DOUBLE) {
+            return (long) in.readDouble();
+        } else {
+            return doReadLong();
+        }
     }
 
-    private Object doReadInt() throws IOException {
+    private Object doReadLong() throws IOException {
         final JsonParser in = parser(JsonParser.class);
 
-        advance(Symbol.INT);
+        advance(Symbol.LONG);
         final JsonToken currentToken = in.getCurrentToken();
 
         return switch (currentToken) {
@@ -41,7 +44,7 @@ public final class ReadIntInterceptor extends AbstractInterceptor<Integer> {
                 yield value;
             }
             case VALUE_NUMBER_INT, VALUE_NUMBER_FLOAT -> {
-                final int value = in.getIntValue();
+                final long value = in.getLongValue();
                 in.nextToken();
                 yield value;
             }
@@ -56,6 +59,6 @@ public final class ReadIntInterceptor extends AbstractInterceptor<Integer> {
 
     @Override
     public Object intercept(final Object[] ignored) throws Throwable {
-        return readInt();
+        return readLong();
     }
 }

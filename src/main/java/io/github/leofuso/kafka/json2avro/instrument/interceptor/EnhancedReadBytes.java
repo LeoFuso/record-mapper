@@ -14,18 +14,13 @@ import org.apache.avro.util.Utf8;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> {
+public final class EnhancedReadBytes extends AbstractInterceptor<ByteBuffer> {
 
-    public static Object intercept(final ResolvingDecoder self, final Object[] arguments) {
-        return new ReadBytesInterceptor(self, arguments)
-                .apply(arguments);
+    public EnhancedReadBytes(final ResolvingDecoder self, final Object[] ignored) {
+        super(self, () -> self.readBytes(null));
     }
 
-    private ReadBytesInterceptor(final ResolvingDecoder self, final Object[] arguments) {
-        super(self, () -> self.readBytes((ByteBuffer) arguments[0]));
-    }
-
-    private Object readBytes(final ByteBuffer ignored) throws IOException {
+    private Object readBytes() throws IOException {
         final Parser parser = parser(Parser.class);
         final JsonDecoder in = in();
 
@@ -34,10 +29,10 @@ public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> 
             final Utf8 value = in.readString(null);
             return ByteBuffer.wrap(value.getBytes(), 0, value.getByteLength());
         }
-        return doReadBytes(ignored);
+        return doReadBytes();
     }
 
-    private Object doReadBytes(final ByteBuffer ignored) throws IOException {
+    private Object doReadBytes() throws IOException {
         final JsonParser in = parser(JsonParser.class);
 
         advance(Symbol.BYTES);
@@ -71,7 +66,7 @@ public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> 
     }
 
     @Override
-    public Object intercept(final Object[] arguments) throws Throwable {
-        return readBytes(arguments != null ? (ByteBuffer) arguments[0] : ByteBuffer.wrap(new byte[0]));
+    public Object intercept(final Object[] ignored) throws Throwable {
+        return readBytes();
     }
 }

@@ -73,7 +73,7 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
             }
             case FIXED -> readFixed(old, expected, in);
             case STRING -> readString(old, expected, in);
-            case BYTES -> invokeEnhanced(READ_BYTES_REWRITE, in , old);
+            case BYTES -> invokeEnhanced(READ_BYTES_REWRITE, in);
             case INT -> invokeEnhanced(READ_INT_REWRITE, in);
             case LONG -> invokeEnhanced(READ_LONG_REWRITE, in);
             case FLOAT -> in.readFloat();
@@ -89,8 +89,8 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
     private Object invokeEnhanced(final String name, final ResolvingDecoder in, final Object ... args) {
         try {
             final Class<? extends Decoder> decoderClass = in.getClass();
-            final Method readLong = decoderClass.getMethod(name);
-            return readLong.invoke(in, args);
+            final Method method = decoderClass.getMethod(name);
+            return method.invoke(in, args);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             Throwables.handleReflectionException(e);
             return null; /* Unreachable code */

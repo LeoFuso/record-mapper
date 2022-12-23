@@ -11,6 +11,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.util.Utf8;
 import org.assertj.core.api.InstanceOfAssertFactories;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,10 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith({ SchemaParameterResolver.class, JsonParameterResolver.class })
 class JsonAvroMapperTest {
 
-    private JsonMapper mapper;
+    private static JsonMapper mapper;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         ByteCodeRewriter.rewrite();
         final JsonMapperFactory mapperFactory = JsonMapperFactory.get();
         mapper = mapperFactory.produce();

@@ -1,10 +1,9 @@
 package io.github.leofuso.kafka.json2avro.instrument.bytecode;
 
-import java.nio.ByteBuffer;
 import java.util.function.Function;
 
-import io.github.leofuso.kafka.json2avro.instrument.resolving.decoder.InnerDecoderAccessor;
-import io.github.leofuso.kafka.json2avro.instrument.resolving.decoder.ParserAccessor;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.accessors.DecoderAccessor;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.accessors.ParserAccessor;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
@@ -51,13 +50,12 @@ public class ResolvingDecoderRewriter implements Function<ByteBuddy, DynamicType
                         FieldAccessor.ofField("parser")
                                 .in(parsingDecoderType)
                 )
-                .implement(InnerDecoderAccessor.class)
+                .implement(DecoderAccessor.class)
                 .intercept(
                         FieldAccessor.ofField("in")
                                 .in(validatingDecoderType)
                 )
                 .defineMethod(READ_BYTES_REWRITE, Object.class, Visibility.PUBLIC)
-                .withParameter(ByteBuffer.class, "old")
                 .intercept(MethodDelegation.to(dispatcherType))
                 .defineMethod(READ_LONG_REWRITE, Object.class, Visibility.PUBLIC)
                 .intercept(MethodDelegation.to(dispatcherType))

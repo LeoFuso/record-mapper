@@ -1,4 +1,4 @@
-package io.github.leofuso.kafka.json2avro.instrument.resolving.decoder;
+package io.github.leofuso.kafka.json2avro.instrument.interceptor.accessors;
 
 import org.apache.avro.io.parsing.Parser;
 

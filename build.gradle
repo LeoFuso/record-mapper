@@ -31,4 +31,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    forkEvery = 1
+    systemProperty('junit.jupiter.execution.parallel.enabled', true)
+    systemProperty('junit.jupiter.execution.parallel.mode.default', 'concurrent')
 }

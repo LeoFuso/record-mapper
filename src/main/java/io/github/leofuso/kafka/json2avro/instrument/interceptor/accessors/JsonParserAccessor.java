@@ -1,4 +1,4 @@
-package io.github.leofuso.kafka.json2avro.instrument.decoder;
+package io.github.leofuso.kafka.json2avro.instrument.interceptor.accessors;
 
 import com.fasterxml.jackson.core.JsonParser;
 
