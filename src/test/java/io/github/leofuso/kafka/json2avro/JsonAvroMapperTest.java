@@ -98,15 +98,16 @@ class JsonAvroMapperTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
-            @SchemaParameter(location = "avro/statement-line.schema.avsc") Schema schema,
-            @JsonParameter(location = "statement.line/statement-line.v2.template.json") String json
+            @SchemaParameter(location = "statement-line.schema.avsc") Schema schema,
+            @JsonParameter(location = "statement.line/statement-line.v1.template.json") String canonicalJson,
+            @JsonParameter(location = "statement.line/statement-line.v2.template.json") String relaxedJson
     ) throws JsonProcessingException {
 
         /* Given */
         final ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
-        final JsonNode expectedJsonNode = objectMapper.readTree(json);
+        final JsonNode expectedJsonNode = objectMapper.readTree(canonicalJson);
 
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+        final byte[] bytes = relaxedJson.getBytes(StandardCharsets.UTF_8);
         final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
 
         /* When */
