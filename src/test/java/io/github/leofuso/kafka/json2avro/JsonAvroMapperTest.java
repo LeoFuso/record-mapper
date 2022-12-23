@@ -20,7 +20,6 @@ import io.github.leofuso.kafka.json2avro.fixture.JsonParameterResolver;
 import io.github.leofuso.kafka.json2avro.fixture.SchemaParameterResolver;
 import io.github.leofuso.kafka.json2avro.fixture.annotation.JsonParameter;
 import io.github.leofuso.kafka.json2avro.fixture.annotation.SchemaParameter;
-import io.github.leofuso.kafka.json2avro.instrument.bytecode.ByteCodeRewriter;
 import io.github.leofuso.kafka.json2avro.internal.ObjectMapperFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +36,6 @@ class JsonAvroMapperTest {
 
     @BeforeAll
     static void setUp() {
-        ByteCodeRewriter.rewrite();
         final JsonMapperFactory mapperFactory = JsonMapperFactory.get();
         mapper = mapperFactory.produce();
     }

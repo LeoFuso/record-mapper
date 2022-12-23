@@ -8,11 +8,11 @@ import io.github.leofuso.kafka.json2avro.JsonMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class InstrumentedJsonMapperFactory implements JsonMapperFactory {
+public class DefaultJsonMapperFactory implements JsonMapperFactory {
 
     @Override
-    public JsonMapper produce(Conversion<?>... additional) {
-        final DatumFactory factory = new RelaxedDatumFactory(additional);
+    public JsonMapper produce(final Conversion<?>... additional) {
+        final DatumFactory factory = new DefaultDatumFactory(additional);
         final ObjectMapper mapper = ObjectMapperFactory.getInstance();
         return new DefaultJsonMapper(factory, mapper);
     }

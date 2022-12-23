@@ -16,7 +16,6 @@ import io.github.leofuso.kafka.json2avro.fixture.JsonParameterResolver;
 import io.github.leofuso.kafka.json2avro.fixture.SchemaParameterResolver;
 import io.github.leofuso.kafka.json2avro.fixture.annotation.JsonParameter;
 import io.github.leofuso.kafka.json2avro.fixture.annotation.SchemaParameter;
-import io.github.leofuso.kafka.json2avro.instrument.bytecode.ByteCodeRewriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -29,7 +28,6 @@ public class DecimalTest {
 
     @BeforeAll
     static void setUp() {
-        ByteCodeRewriter.rewrite();
         final JsonMapperFactory mapperFactory = JsonMapperFactory.get();
         mapper = mapperFactory.produce();
     }

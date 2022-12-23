@@ -1,6 +1,5 @@
 package io.github.leofuso.kafka.json2avro.instrument.bytecode;
 
-import java.io.IOException;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -11,13 +10,13 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.MethodGraph;
 
-public class ByteCodeRewriter implements Runnable, Function<ByteBuddy, Void> {
+public class LogicalTypeConversionEnhancement implements Runnable, Function<ByteBuddy, Void> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ByteCodeRewriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogicalTypeConversionEnhancement.class);
 
-    public static void rewrite() {
-        logger.trace("Applying ByteCode rewriter...");
-        final ByteCodeRewriter rewriter = new ByteCodeRewriter();
+    public static void enhance() {
+        logger.trace("Applying LogicalType conversion enhancement using byte code rewriter...");
+        final LogicalTypeConversionEnhancement rewriter = new LogicalTypeConversionEnhancement();
         rewriter.run();
     }
 
@@ -42,8 +41,8 @@ public class ByteCodeRewriter implements Runnable, Function<ByteBuddy, Void> {
 
             return null;
 
-        } catch (IOException e) {
-            logger.error("Unnable to enhance Decoders.", e);
+        } catch (final Exception e) {
+            logger.error("Unnable to apply byte code enhancement.", e);
             return null;
         }
     }
@@ -52,7 +51,7 @@ public class ByteCodeRewriter implements Runnable, Function<ByteBuddy, Void> {
     public void run() {
         final MethodGraph.Compiler compiler = MethodGraph.Compiler.Default.forJVMHierarchy();
         final ByteBuddy byteBuddy = new ByteBuddy().with(compiler);
-        new ByteCodeRewriter()
+        new LogicalTypeConversionEnhancement()
                 .apply(byteBuddy);
     }
 }
