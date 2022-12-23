@@ -44,7 +44,7 @@ public class TimeMillisTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
-            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @SchemaParameter(location = "time.millis.schema.avsc") Schema schema,
             @JsonParameter(location = "time/millis/time.int.json") String json
     ) {
 
@@ -71,7 +71,7 @@ public class TimeMillisTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784(
-            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @SchemaParameter(location = "time.millis.schema.avsc") Schema schema,
             @JsonParameter(location = "time/millis/time.invalid.int.json") String json
     ) {
 
@@ -95,7 +95,7 @@ public class TimeMillisTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
-            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @SchemaParameter(location = "time.millis.schema.avsc") Schema schema,
             @JsonParameter(location = "time/millis/time.ISO-8601.json") String json
     ) {
 
@@ -122,7 +122,7 @@ public class TimeMillisTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71785(
-            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @SchemaParameter(location = "time.millis.schema.avsc") Schema schema,
             @JsonParameter(location = "time/millis/time.invalid.ISO-8601.json") String json
     ) {
 
@@ -144,7 +144,7 @@ public class TimeMillisTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717842(
-            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @SchemaParameter(location = "time.millis.schema.avsc") Schema schema,
             @JsonParameter(location = "time/millis/time.zeroed.int.json") String json
     ) {
 
@@ -170,7 +170,7 @@ public class TimeMillisTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717840(
-            @SchemaParameter(location = "time.millis.schema.json") Schema schema,
+            @SchemaParameter(location = "time.millis.schema.avsc") Schema schema,
             @JsonParameter(location = "time/millis/time.null.int.json") String json
     ) {
 

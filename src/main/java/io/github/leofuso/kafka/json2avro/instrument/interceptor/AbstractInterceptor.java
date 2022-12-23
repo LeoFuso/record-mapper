@@ -3,9 +3,12 @@ package io.github.leofuso.kafka.json2avro.instrument.interceptor;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-import io.github.leofuso.kafka.json2avro.instrument.Interceptor;
-
+import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.ResolvingDecoder;
+import org.apache.avro.io.parsing.Symbol;
+
+import io.github.leofuso.kafka.json2avro.instrument.Interceptor;
+import io.github.leofuso.kafka.json2avro.instrument.decoder.JsonDecoderAdvancer;
 
 public abstract class AbstractInterceptor<T> implements Interceptor {
 
@@ -23,12 +26,19 @@ public abstract class AbstractInterceptor<T> implements Interceptor {
     }
 
     @Override
-    public ResolvingDecoder getSelf() {
+    public ResolvingDecoder self() {
         return self;
     }
 
     @Override
     public Callable<?> getOriginal() {
         return original;
+    }
+
+    protected void advance(final Symbol symbol) {
+        final JsonDecoder in = in();
+        if (in instanceof JsonDecoderAdvancer advancer) {
+            advancer.doAdvance(symbol);
+        }
     }
 }

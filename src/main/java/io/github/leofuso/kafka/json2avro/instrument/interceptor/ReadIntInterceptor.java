@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.apache.avro.AvroTypeException;
 import org.apache.avro.io.ResolvingDecoder;
+import org.apache.avro.io.parsing.Parser;
+import org.apache.avro.io.parsing.Symbol;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -20,8 +22,17 @@ public final class ReadIntInterceptor extends AbstractInterceptor<Integer> {
     }
 
     private Object readInt() throws IOException {
-        final JsonParser in = getParser();
-        final JsonToken currentToken = in.nextValue();
+        final Parser parser = parser(Parser.class);
+
+        parser.advance(Symbol.INT);
+        return doReadInt();
+    }
+
+    private Object doReadInt() throws IOException {
+        final JsonParser in = parser(JsonParser.class);
+
+        advance(Symbol.INT);
+        final JsonToken currentToken = in.getCurrentToken();
 
         return switch (currentToken) {
             case VALUE_STRING -> {
@@ -34,7 +45,11 @@ public final class ReadIntInterceptor extends AbstractInterceptor<Integer> {
                 in.nextToken();
                 yield value;
             }
-            case END_OBJECT, VALUE_NULL -> null;
+            case VALUE_NULL -> {
+                in.nextToken();
+                yield null;
+            }
+            case END_OBJECT -> null;
             default -> throw new AvroTypeException("Expected [CharSequence] or [number]. Got " + currentToken);
         };
     }

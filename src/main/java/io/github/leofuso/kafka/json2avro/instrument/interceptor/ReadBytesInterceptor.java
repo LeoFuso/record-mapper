@@ -5,7 +5,9 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.avro.AvroTypeException;
+import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.ResolvingDecoder;
+import org.apache.avro.io.parsing.Parser;
 import org.apache.avro.io.parsing.Symbol;
 import org.apache.avro.util.Utf8;
 
@@ -24,16 +26,21 @@ public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> 
     }
 
     private Object readBytes(final ByteBuffer ignored) throws IOException {
-        final Symbol actual = advanceBoth(Symbol.BYTES);
+        final Parser parser = parser(Parser.class);
+        final JsonDecoder in = in();
+
+        final Symbol actual = parser.advance(Symbol.BYTES);
         if (actual == Symbol.STRING) {
-            final Utf8 stringValue = getDecoder().readString(null);
-            return ByteBuffer.wrap(stringValue.getBytes(), 0, stringValue.getByteLength());
+            final Utf8 value = in.readString(null);
+            return ByteBuffer.wrap(value.getBytes(), 0, value.getByteLength());
         }
         return doReadBytes(ignored);
     }
 
     private Object doReadBytes(final ByteBuffer ignored) throws IOException {
-        final JsonParser in = getParser();
+        final JsonParser in = parser(JsonParser.class);
+
+        advance(Symbol.BYTES);
         final JsonToken currentToken = in.getCurrentToken();
 
         return switch (currentToken) {
@@ -54,7 +61,11 @@ public final class ReadBytesInterceptor extends AbstractInterceptor<ByteBuffer> 
                 in.nextToken();
                 yield value;
             }
-            case END_OBJECT, VALUE_NULL -> null;
+            case VALUE_NULL -> {
+                in.nextToken();
+                yield null;
+            }
+            case END_OBJECT -> null;
             default -> throw new AvroTypeException("Expected [byte] or [number]. Got " + currentToken);
         };
     }

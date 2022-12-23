@@ -2,23 +2,18 @@ package io.github.leofuso.kafka.json2avro.instrument;
 
 import javax.annotation.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import io.github.leofuso.kafka.json2avro.instrument.interceptor.AbstractInterceptor;
-
 import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.ResolvingDecoder;
-import org.apache.avro.io.parsing.Parser;
-import org.apache.avro.io.parsing.Symbol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.leofuso.kafka.json2avro.exception.Throwables;
-import io.github.leofuso.kafka.json2avro.instrument.decoder.JsonDecoderAdvancer;
 import io.github.leofuso.kafka.json2avro.instrument.decoder.JsonParserAccessor;
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.AbstractInterceptor;
 import io.github.leofuso.kafka.json2avro.instrument.resolving.decoder.InnerDecoderAccessor;
 import io.github.leofuso.kafka.json2avro.instrument.resolving.decoder.ParserAccessor;
 
@@ -81,42 +76,27 @@ public interface Interceptor extends Function<Object[], Object> {
         }
     }
 
-    default Symbol advanceBoth(Symbol symbol) {
-        final ResolvingDecoder self = getSelf();
-        final JsonDecoder decoder = getDecoder();
-
-        if (self instanceof ParserAccessor accessor && decoder instanceof JsonDecoderAdvancer advancer) {
-            try {
-                final Parser parser = accessor.accessParser();
-                final Symbol actual = parser.advance(symbol);
-                advancer.doAdvance(symbol);
-                return actual;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+    @SuppressWarnings("unchecked")
+    default <T> T parser(Class<T> type) {
+        if (JsonParser.class == type) {
+            if (in() instanceof JsonParserAccessor accessor) {
+                return (T) accessor.accessJsonParser();
             }
+            throw new UndeclaredThrowableException(
+                    new IllegalStateException("JsonDecoder is not compatible with JsonParserAccessor type.")
+            );
+        } else {
+            if (self() instanceof ParserAccessor accessor) {
+                return (T) accessor.accessParser();
+            }
+            throw new UndeclaredThrowableException(
+                    new IllegalStateException("ResolvingDecoder is not compatible with InnerDecoderAccessor type.")
+            );
         }
-        throw new UndeclaredThrowableException(
-                new IllegalStateException(
-                        """
-                                ResolvingDecoder is not compatible with ParserAccessor type and or \
-                                JsonDecoder is not compatible with JsonDecoderAdvancer type.
-                                """
-                )
-        );
     }
 
-    default JsonParser getParser() {
-        final JsonDecoder decoder = getDecoder();
-        if (decoder instanceof JsonParserAccessor accessor) {
-            return accessor.accessJsonParser();
-        }
-        throw new UndeclaredThrowableException(
-                new IllegalStateException("JsonDecoder is not compatible with JsonParserAccessor type.")
-        );
-    }
-
-    default JsonDecoder getDecoder() {
-        final ResolvingDecoder self = getSelf();
+    default JsonDecoder in() {
+        final ResolvingDecoder self = self();
         if (self instanceof InnerDecoderAccessor accessor) {
             return accessor.accessDecoder();
         }
@@ -125,7 +105,7 @@ public interface Interceptor extends Function<Object[], Object> {
         );
     }
 
-    default ResolvingDecoder getSelf() {
+    default ResolvingDecoder self() {
         throw new UnsupportedOperationException("getSelf() was not implemented.");
     }
 

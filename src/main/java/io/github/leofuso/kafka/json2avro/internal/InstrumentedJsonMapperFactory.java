@@ -4,7 +4,6 @@ import org.apache.avro.Conversion;
 import org.apache.avro.Conversions;
 import org.apache.avro.RelaxedDecimalConversion;
 import org.apache.avro.data.RelaxedTimeConversions;
-import org.apache.avro.data.TimeConversions;
 import org.apache.avro.generic.GenericData;
 
 import io.github.leofuso.kafka.json2avro.JsonMapper;
@@ -25,8 +24,8 @@ public class InstrumentedJsonMapperFactory implements JsonMapperFactory {
         data.addLogicalTypeConversion(new RelaxedTimeConversions.TimeMicrosConversion());
         data.addLogicalTypeConversion(new RelaxedTimeConversions.TimestampMillisConversion());
         data.addLogicalTypeConversion(new RelaxedTimeConversions.TimestampMicrosConversion());
-        data.addLogicalTypeConversion(new TimeConversions.LocalTimestampMillisConversion());
-        data.addLogicalTypeConversion(new TimeConversions.LocalTimestampMicrosConversion());
+        data.addLogicalTypeConversion(new RelaxedTimeConversions.LocalTimestampMillisConversion());
+        data.addLogicalTypeConversion(new RelaxedTimeConversions.LocalTimestampMicrosConversion());
 
         for (Conversion<?> converter : additional) {
             data.addLogicalTypeConversion(converter);

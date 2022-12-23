@@ -44,7 +44,7 @@ public class TimestampMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "timestamp.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "timestamp/micros/timestamp.long.json") String json
     ) {
 
@@ -71,7 +71,7 @@ public class TimestampMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "timestamp.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "timestamp/micros/timestamp.invalid.long.json") String json
     ) {
 
@@ -96,7 +96,7 @@ public class TimestampMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "timestamp.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "timestamp/micros/timestamp.ISO-8601.json") String json
     ) {
 
@@ -123,7 +123,7 @@ public class TimestampMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71785(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "timestamp.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "timestamp/micros/timestamp.invalid.ISO-8601.json") String json
     ) {
 
@@ -145,7 +145,7 @@ public class TimestampMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717842(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "timestamp.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "timestamp/micros/timestamp.zeroed.long.json") String json
     ) {
 
@@ -171,7 +171,7 @@ public class TimestampMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717840(
-            @SchemaParameter(location = "timestamp.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "timestamp.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "timestamp/micros/timestamp.null.long.json") String json
     ) {
 

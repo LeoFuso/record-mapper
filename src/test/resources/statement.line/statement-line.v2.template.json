@@ -12,6 +12,8 @@
     "operation": "CREDIT",
     "amount": 19.565,
     "competence": "2022-12-18T04:51:55.565970Z",
+    "date": "2022-12-22",
+    "time": "20:23:59.059",
     "baggage": {
         "orders": "f1a4cfc3-b1a2-459d-ab0c-d7ac3cac42d0, 126cefe4-aab4-4bb6-9876-e245c834b0ac, 4475ad68-5c74-40bb-ae82-c79dfab3f149"
     }

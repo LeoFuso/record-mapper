@@ -1,0 +1,17 @@
+{
+    "type": "record",
+    "name": "LocalTimestampMicros",
+    "namespace": "io.github.leofuso.avro.tests",
+    "doc": "A simple Record containing only a local-timestamp field.",
+    "fields": [
+        {
+            "name": "timestamp",
+            "type": {
+                "type": "long",
+                "logicalType": "local-timestamp-micros"
+            },
+            "doc": "A local-timestamp in microsecond precision.",
+            "default": 0
+        }
+    ]
+}

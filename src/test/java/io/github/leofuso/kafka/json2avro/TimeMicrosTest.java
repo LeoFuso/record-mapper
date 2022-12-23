@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
@@ -45,7 +44,7 @@ public class TimeMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
-            @SchemaParameter(location = "time.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "time.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "time/micros/time.long.json") String json
     ) {
 
@@ -72,7 +71,7 @@ public class TimeMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784(
-            @SchemaParameter(location = "time.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "time.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "time/micros/time.invalid.long.json") String json
     ) {
 
@@ -97,7 +96,7 @@ public class TimeMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
-            @SchemaParameter(location = "time.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "time.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "time/micros/time.ISO-8601.json") String json
     ) {
 
@@ -124,7 +123,7 @@ public class TimeMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71785(
-            @SchemaParameter(location = "time.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "time.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "time/micros/time.invalid.ISO-8601.json") String json
     ) {
 
@@ -146,7 +145,7 @@ public class TimeMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717842(
-            @SchemaParameter(location = "time.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "time.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "time/micros/time.zeroed.long.json") String json
     ) {
 
@@ -172,7 +171,7 @@ public class TimeMicrosTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717840(
-            @SchemaParameter(location = "time.micros.schema.json") Schema schema,
+            @SchemaParameter(location = "time.micros.schema.avsc") Schema schema,
             @JsonParameter(location = "time/micros/time.null.long.json") String json
     ) {
 

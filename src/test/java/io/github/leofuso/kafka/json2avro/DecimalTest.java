@@ -43,7 +43,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.double.json") String json
     ) {
 
@@ -72,7 +72,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784a(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.invalid.double.json") String json
     ) {
 
@@ -94,7 +94,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784d(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.string.json") String json
     ) {
 
@@ -123,7 +123,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717842(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.invalid.string.json") String json
     ) {
 
@@ -145,7 +145,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717848(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.gibberish.string.json") String json
     ) {
 
@@ -173,7 +173,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784e(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.ISO-8859-1.json") String json
     ) {
 
@@ -201,7 +201,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717843(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.invalid.ISO-8859-1.json") String json
     ) {
 
@@ -223,7 +223,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.int.json") String json
     ) {
 
@@ -252,7 +252,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717847(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.invalid.string.json") String json
     ) {
 
@@ -274,7 +274,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717844(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.zeroed.json") String json
     ) {
 
@@ -300,7 +300,7 @@ public class DecimalTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717840(
-            @SchemaParameter(location = "decimal.schema.json") Schema schema,
+            @SchemaParameter(location = "decimal.schema.avsc") Schema schema,
             @JsonParameter(location = "decimal/decimal.null.json") String json
     ) {
 

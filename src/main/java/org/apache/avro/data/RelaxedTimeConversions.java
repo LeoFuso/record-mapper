@@ -2,6 +2,7 @@ package org.apache.avro.data;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.apache.avro.LogicalType;
@@ -50,6 +51,24 @@ public class RelaxedTimeConversions extends TimeConversions {
         @Override
         public LocalDate fromCharSequence(final CharSequence value, final Schema schema, final LogicalType type) {
             return LocalDate.parse(value);
+        }
+    }
+
+
+    public static class LocalTimestampMicrosConversion extends TimeConversions.LocalTimestampMicrosConversion {
+
+        @Override
+        public LocalDateTime fromCharSequence(final CharSequence value, final Schema schema, final LogicalType type) {
+            return LocalDateTime.parse(value);
+        }
+    }
+
+
+    public static class LocalTimestampMillisConversion extends TimeConversions.LocalTimestampMillisConversion {
+
+        @Override
+        public LocalDateTime fromCharSequence(final CharSequence value, final Schema schema, final LogicalType type) {
+            return LocalDateTime.parse(value);
         }
     }
 

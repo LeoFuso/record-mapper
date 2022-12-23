@@ -44,7 +44,7 @@ public class DateTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784c(
-            @SchemaParameter(location = "date.schema.json") Schema schema,
+            @SchemaParameter(location = "date.schema.avsc") Schema schema,
             @JsonParameter(location = "date/date.int.json") String json
     ) {
 
@@ -71,7 +71,7 @@ public class DateTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784(
-            @SchemaParameter(location = "date.schema.json") Schema schema,
+            @SchemaParameter(location = "date.schema.avsc") Schema schema,
             @JsonParameter(location = "date/date.invalid.int.json") String json
     ) {
 
@@ -95,7 +95,7 @@ public class DateTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71784f(
-            @SchemaParameter(location = "date.schema.json") Schema schema,
+            @SchemaParameter(location = "date.schema.avsc") Schema schema,
             @JsonParameter(location = "date/date.ISO-8601.json") String json
     ) {
 
@@ -122,7 +122,7 @@ public class DateTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf71785(
-            @SchemaParameter(location = "date.schema.json") Schema schema,
+            @SchemaParameter(location = "date.schema.avsc") Schema schema,
             @JsonParameter(location = "date/date.invalid.ISO-8601.json") String json
     ) {
 
@@ -144,7 +144,7 @@ public class DateTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717842(
-            @SchemaParameter(location = "date.schema.json") Schema schema,
+            @SchemaParameter(location = "date.schema.avsc") Schema schema,
             @JsonParameter(location = "date/date.zeroed.int.json") String json
     ) {
 
@@ -170,7 +170,7 @@ public class DateTest {
                     """
     )
     void b8aec7e506ce410bb646f517cf717840(
-            @SchemaParameter(location = "date.schema.json") Schema schema,
+            @SchemaParameter(location = "date.schema.avsc") Schema schema,
             @JsonParameter(location = "date/date.null.int.json") String json
     ) {
 

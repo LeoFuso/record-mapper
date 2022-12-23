@@ -2,12 +2,11 @@ package io.github.leofuso.kafka.json2avro.instrument;
 
 import java.lang.reflect.Method;
 
-import io.github.leofuso.kafka.json2avro.instrument.interceptor.ReadBytesInterceptor;
+import org.apache.avro.io.ResolvingDecoder;
 
+import io.github.leofuso.kafka.json2avro.instrument.interceptor.ReadBytesInterceptor;
 import io.github.leofuso.kafka.json2avro.instrument.interceptor.ReadIntInterceptor;
 import io.github.leofuso.kafka.json2avro.instrument.interceptor.ReadLongInterceptor;
-
-import org.apache.avro.io.ResolvingDecoder;
 
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;

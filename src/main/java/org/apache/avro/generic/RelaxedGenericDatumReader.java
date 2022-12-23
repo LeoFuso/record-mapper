@@ -15,6 +15,7 @@ import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Conversion;
 import org.apache.avro.LogicalType;
 import org.apache.avro.Schema;
+import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.io.ResolvingDecoder;
 
@@ -22,6 +23,11 @@ import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher
 import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_INT_REWRITE;
 import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_LONG_REWRITE;
 
+/**
+ *  {@link DatumReader} for generic Java objects.
+ *  <p>
+ *  Relaxed implementation accepts relaxed values, such as BigDecimal('9.25') instead of the canonical string only version.
+ */
 public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
 
     public RelaxedGenericDatumReader() {}
@@ -54,7 +60,8 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
      * specific parser functions to overriden ones, e.g., Expecting a Long field, but found a CharSequence value instead.
      */
     protected Object readWithoutConversion(final Object old, final Schema expected, final ResolvingDecoder in) throws IOException {
-        return switch (expected.getType()) {
+        final Schema.Type expectedType = expected.getType();
+        return switch (expectedType) {
             case RECORD -> readRecord(old, expected, in);
             case ENUM -> readEnum(expected, in);
             case ARRAY -> readArray(old, expected, in);
@@ -66,36 +73,9 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
             }
             case FIXED -> readFixed(old, expected, in);
             case STRING -> readString(old, expected, in);
-            case BYTES -> {
-                try {
-                    final Class<? extends Decoder> decoderClass = in.getClass();
-                    final Method readBytes = decoderClass.getMethod(READ_BYTES_REWRITE, ByteBuffer.class);
-                    yield readBytes.invoke(in, old instanceof ByteBuffer byteBuffer ? byteBuffer : null);
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                    Throwables.handleReflectionException(e);
-                    yield null; /* Unreachable code */
-                }
-            }
-            case INT -> {
-                try {
-                    final Class<? extends Decoder> decoderClass = in.getClass();
-                    final Method readInt = decoderClass.getMethod(READ_INT_REWRITE);
-                    yield readInt.invoke(in);
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                    Throwables.handleReflectionException(e);
-                    yield null; /* Unreachable code */
-                }
-            }
-            case LONG -> {
-                try {
-                    final Class<? extends Decoder> decoderClass = in.getClass();
-                    final Method readLong = decoderClass.getMethod(READ_LONG_REWRITE);
-                    yield readLong.invoke(in);
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                    Throwables.handleReflectionException(e);
-                    yield null; /* Unreachable code */
-                }
-            }
+            case BYTES -> invokeEnhanced(READ_BYTES_REWRITE, in , old);
+            case INT -> invokeEnhanced(READ_INT_REWRITE, in);
+            case LONG -> invokeEnhanced(READ_LONG_REWRITE, in);
             case FLOAT -> in.readFloat();
             case DOUBLE -> in.readDouble();
             case BOOLEAN -> in.readBoolean();
@@ -104,6 +84,17 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
                 yield null;
             }
         };
+    }
+
+    private Object invokeEnhanced(final String name, final ResolvingDecoder in, final Object ... args) {
+        try {
+            final Class<? extends Decoder> decoderClass = in.getClass();
+            final Method readLong = decoderClass.getMethod(name);
+            return readLong.invoke(in, args);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            Throwables.handleReflectionException(e);
+            return null; /* Unreachable code */
+        }
     }
 
     /**
@@ -121,7 +112,8 @@ public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
         }
 
         try {
-            return switch (schema.getType()) {
+            final Schema.Type expectedType = schema.getType();
+            return switch (expectedType) {
                 case RECORD -> conversion.fromRecord((IndexedRecord) datum, schema, type);
                 case ENUM -> conversion.fromEnumSymbol((GenericEnumSymbol<?>) datum, schema, type);
                 case ARRAY -> conversion.fromArray((Collection<?>) datum, schema, type);

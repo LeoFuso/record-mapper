@@ -108,6 +108,24 @@
             "default": 0
         },
         {
+            "name": "date",
+            "type": {
+                "type": "int",
+                "logicalType": "date"
+            },
+            "doc": "The local date of the record creation.",
+            "default": 0
+        },
+        {
+            "name": "time",
+            "type": {
+                "type": "int",
+                "logicalType": "time-millis"
+            },
+            "doc": "The local time with millisecond precision of the record creation.",
+            "default": 0
+        },
+        {
             "name": "baggage",
             "type": {
                 "type": "map",
