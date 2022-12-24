@@ -8,6 +8,8 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificRecord;
 
+import java.nio.ByteBuffer;
+
 /**
  * A JsonMapper can produce {@link GenericRecord records} {@link Schema Schema-compatible} from a relaxed JSON-compatible byte array, and
  * can produce a JSON-compatible byte array from an avro compliant {@link GenericRecord record}.
@@ -18,6 +20,8 @@ import org.apache.avro.specific.SpecificRecord;
  * There are no performance guarantees.
  */
 public interface JsonMapper {
+
+    ByteBuffer serialize(String json, Schema schema);
 
     GenericData.Record asGenericDataRecord(String json, Schema schema);
 
