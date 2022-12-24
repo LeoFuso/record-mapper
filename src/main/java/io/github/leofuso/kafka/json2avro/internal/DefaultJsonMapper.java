@@ -3,18 +3,21 @@ package io.github.leofuso.kafka.json2avro.internal;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Objects;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.NoWrappingJsonEncoder;
+import org.apache.avro.specific.SpecificData;
+import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.avro.specific.SpecificRecord;
 
 import io.github.leofuso.kafka.json2avro.DatumFactory;
 import io.github.leofuso.kafka.json2avro.JsonMapper;
@@ -36,21 +39,19 @@ public class DefaultJsonMapper implements JsonMapper {
     }
 
     @Override
-    public GenericData.Record asGenericDataRecord(final InputStream valueStream, final Schema schema) {
-        try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+    public GenericData.Record asGenericDataRecord(final String json, final Schema schema) {
+        try {
 
             final ObjectReader reader = mapper.reader();
-            final JsonNode sourceNode = reader.readTree(valueStream);
+            final JsonNode sourceNode = reader.readTree(json);
 
             final JsonNode compatibleNode = toCompatibleNode(sourceNode, schema);
-            mapper.writeValue(out, compatibleNode);
-            final byte[] nodeBytes = out.toByteArray();
+            final String datumInput = mapper.writeValueAsString(compatibleNode);
 
-            final ByteArrayInputStream datumReaderInput = new ByteArrayInputStream(nodeBytes);
-            final JsonDecoder decoder = DecoderFactory.get()
-                    .jsonDecoder(schema, datumReaderInput);
+            final DecoderFactory decoderFactory = DecoderFactory.get();
+            final JsonDecoder decoder = decoderFactory.jsonDecoder(schema, datumInput);
 
-            final DatumReader<GenericData.Record> datumReader = datumFactory.makeReader(schema, GenericData.Record.class);
+            final DatumReader<GenericData.Record> datumReader = datumFactory.createReader(schema);
             return datumReader.read(null, decoder);
 
         } catch (final IOException e) {
@@ -85,14 +86,53 @@ public class DefaultJsonMapper implements JsonMapper {
     }
 
     @Override
-    public <T extends GenericRecord> T asRecord(final InputStream valueStream, final Schema schema) {
-        throw new UnsupportedOperationException();
+    public <T extends SpecificRecord> T asRecord(final String json, Class<T> type) {
+
+        final SpecificData specificData = SpecificData.getForClass(type);
+        final Schema schema = specificData.getSchema(type);
+
+        try (
+                final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serialize(json, schema));
+                final ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)
+        ) {
+            final DatumReader<T> reader = datumFactory.createReader(type);
+            return reader.read(null, SpecificData.getDecoder(objectInputStream));
+        } catch (final IOException e) {
+            throw new AvroMappingException("Unable to parse to JsonNode.", e);
+        }
+    }
+
+    private byte[] serialize(final String json, final Schema schema) {
+        try (
+                final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                final ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)
+        ) {
+
+            final BinaryEncoder encoder = SpecificData.getEncoder(objectOutputStream);
+
+            final GenericData.Record genericRecord = asGenericDataRecord(json, schema);
+            final DatumWriter<GenericData.Record> writer = datumFactory.createWriter(schema);
+            writer.write(genericRecord, encoder);
+            encoder.flush();
+
+            return outputStream.toByteArray();
+        } catch (final IOException e) {
+            throw new AvroMappingException("Unable to parse to JsonNode.", e);
+        }
     }
 
     @Override
-    public <T extends GenericRecord> JsonNode asJsonNode(final T record) {
+    @SuppressWarnings("unchecked")
+    public <T extends SpecificRecord> JsonNode asJsonNode(final T record) {
         try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            serialize(outputStream, record);
+
+            final Schema schema = record.getSchema();
+            final SpecificDatumWriter<T> writer = datumFactory.createWriter((Class<T>) record.getClass());
+
+            final NoWrappingJsonEncoder encoder = new NoWrappingJsonEncoder(schema, outputStream);
+            writer.write(record, encoder);
+
+            encoder.flush();
             return mapper.readTree(outputStream.toByteArray());
         } catch (final IOException e) {
             throw new AvroMappingException("Unable to parse to JsonNode.", e);
@@ -100,18 +140,17 @@ public class DefaultJsonMapper implements JsonMapper {
     }
 
     @Override
-    public <T extends GenericRecord> void serialize(final OutputStream outputStream, final T record) {
-        try {
+    public JsonNode asJsonNode(final GenericData.Record record) {
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
             final Schema schema = record.getSchema();
-            final NoWrappingJsonEncoder jsonEncoder = new NoWrappingJsonEncoder(schema, outputStream);
+            final DatumWriter<GenericData.Record> writer = datumFactory.createWriter(schema);
 
-            @SuppressWarnings("unchecked")
-            final Class<T> recordClass = (Class<T>) record.getClass();
-            final DatumWriter<T> writer = datumFactory.makeWriter(schema, recordClass);
+            final NoWrappingJsonEncoder encoder = new NoWrappingJsonEncoder(schema, outputStream);
+            writer.write(record, encoder);
 
-            writer.write(record, jsonEncoder);
-            jsonEncoder.flush();
-
+            encoder.flush();
+            return mapper.readTree(outputStream.toByteArray());
         } catch (final IOException e) {
             throw new AvroMappingException("Unable to parse to JsonNode.", e);
         }

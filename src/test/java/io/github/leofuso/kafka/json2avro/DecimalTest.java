@@ -1,7 +1,6 @@
 package io.github.leofuso.kafka.json2avro;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.avro.AvroTypeException;
 import org.apache.avro.Schema;
@@ -45,11 +44,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.double.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -74,11 +70,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.invalid.double.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(AvroTypeException.class)
                 .hasMessage("Cannot encode decimal with scale 4 as scale 3 without rounding");
     }
@@ -96,11 +89,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.string.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -125,11 +115,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.invalid.string.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(AvroTypeException.class)
                 .hasMessage("Cannot encode decimal with scale 4 as scale 3 without rounding");
     }
@@ -147,11 +134,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.gibberish.string.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -175,11 +159,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.ISO-8859-1.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -203,11 +184,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.invalid.ISO-8859-1.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(AvroTypeException.class)
                 .hasMessage("Cannot encode decimal with scale 4 as scale 3 without rounding");
     }
@@ -225,11 +203,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.int.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -254,11 +229,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.invalid.string.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(AvroTypeException.class)
                 .hasMessage("Cannot encode decimal with scale 4 as scale 3 without rounding");
     }
@@ -276,11 +248,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.zeroed.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -302,11 +271,8 @@ public class DecimalTest {
             @JsonParameter(location = "decimal/decimal.null.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)

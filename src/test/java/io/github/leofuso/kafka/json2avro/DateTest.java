@@ -1,7 +1,6 @@
 package io.github.leofuso.kafka.json2avro;
 
 import java.lang.reflect.UndeclaredThrowableException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -46,11 +45,8 @@ public class DateTest {
             @JsonParameter(location = "date/date.int.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -73,15 +69,13 @@ public class DateTest {
             @JsonParameter(location = "date/date.invalid.int.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        final String expectedError = "Numeric value (2147483648) out of range of int (-2147483648 - 2147483647)\n" +
-                " at [Source: (ByteArrayInputStream); line: 1, column: 19]";
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(UndeclaredThrowableException.class)
-                .hasRootCauseMessage(expectedError);
+                .hasRootCauseMessage(
+                        "Numeric value (2147483648) out of range of int (-2147483648 - 2147483647)\n" +
+                                " at [Source: (String)\"{\"date\":2147483648}\"; line: 1, column: 19]"
+                );
     }
 
     @Test
@@ -97,11 +91,8 @@ public class DateTest {
             @JsonParameter(location = "date/date.ISO-8601.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -124,11 +115,8 @@ public class DateTest {
             @JsonParameter(location = "date/date.invalid.ISO-8601.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(DateTimeParseException.class)
                 .hasMessage("Text 'Tue, 3 Jun 2008' could not be parsed at index 0");
     }
@@ -146,11 +134,8 @@ public class DateTest {
             @JsonParameter(location = "date/date.zeroed.int.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -172,11 +157,8 @@ public class DateTest {
             @JsonParameter(location = "date/date.null.int.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)

@@ -5,9 +5,6 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.io.DatumReader;
-import org.apache.avro.io.DatumWriter;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
@@ -26,16 +23,22 @@ public class DefaultDatumFactory implements DatumFactory {
     }
 
     @Override
-    public <T extends GenericRecord> DatumReader<T> makeReader(final Schema schema, final Class<T> type) {
-        return SpecificRecord.class.isAssignableFrom(type)
-                ? new SpecificDatumReader<>(schema)
-                : new GenericDatumReader<>(schema, schema, data);
+    public <T extends SpecificRecord> SpecificDatumReader<T> createReader(final Class<T> type) {
+        return new SpecificDatumReader<>(type);
     }
 
     @Override
-    public <T extends GenericRecord> DatumWriter<T> makeWriter(final Schema schema, final Class<T> type) {
-        return SpecificRecord.class.isAssignableFrom(type)
-                ? new SpecificDatumWriter<>(schema)
-                : new GenericDatumWriter<>(schema, data);
+    public <T> GenericDatumReader<T> createReader(final Schema schema) {
+        return new GenericDatumReader<>(schema, schema, data);
+    }
+
+    @Override
+    public <T extends SpecificRecord> SpecificDatumWriter<T> createWriter(final Class<T> type) {
+        return new SpecificDatumWriter<>(type);
+    }
+
+    @Override
+    public <T> GenericDatumWriter<T> createWriter(final Schema schema) {
+        return new GenericDatumWriter<>(schema, data);
     }
 }

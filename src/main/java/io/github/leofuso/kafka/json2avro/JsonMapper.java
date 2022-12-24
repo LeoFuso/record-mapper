@@ -1,8 +1,5 @@
 package io.github.leofuso.kafka.json2avro;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.avro.AvroRuntimeException;
@@ -11,6 +8,9 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 
 /**
  * A JsonMapper can produce {@link GenericRecord records} {@link Schema Schema-compatible} from a relaxed JSON-compatible byte array, and
@@ -23,29 +23,13 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public interface JsonMapper {
 
-    default GenericData.Record asGenericDataRecord(byte[] value, Schema schema) {
-        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(value)) {
-            return asGenericDataRecord(byteArrayInputStream, schema);
-        } catch (final IOException e) {
-            throw new AvroMappingException("Unable to parse value.", e);
-        }
-    }
+    GenericData.Record asGenericDataRecord(String json, Schema schema);
 
-    default <T extends GenericRecord> T asRecord(byte[] value, Schema schema) {
-        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(value)) {
-            return asRecord(byteArrayInputStream, schema);
-        } catch (final IOException e) {
-            throw new AvroMappingException("Unable to parse value.", e);
-        }
-    }
+    <T extends SpecificRecord> T asRecord(String json, Class<T> type);
 
-    GenericData.Record asGenericDataRecord(InputStream valueStream, Schema schema);
+    JsonNode asJsonNode(GenericData.Record record);
 
-    <T extends GenericRecord> T asRecord(InputStream valueStream, Schema schema);
-
-    <T extends GenericRecord> JsonNode asJsonNode(T record);
-
-    <T extends GenericRecord> void serialize(OutputStream outputStream, T record);
+    <T extends SpecificRecord> JsonNode asJsonNode(T record);
 
     class AvroMappingException extends AvroRuntimeException {
 

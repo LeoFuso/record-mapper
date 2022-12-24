@@ -1,7 +1,6 @@
 package io.github.leofuso.kafka.json2avro;
 
 import java.lang.reflect.UndeclaredThrowableException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
@@ -46,11 +45,8 @@ public class TimeMicrosTest {
             @JsonParameter(location = "time/micros/time.long.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -73,16 +69,13 @@ public class TimeMicrosTest {
             @JsonParameter(location = "time/micros/time.invalid.long.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        final String expectedError = "Numeric value (9223372036854775808) out of range of long (-9223372036854775808 - " +
-                "9223372036854775807)\n" +
-                " at [Source: (ByteArrayInputStream); line: 1, column: 28]";
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(UndeclaredThrowableException.class)
-                .hasRootCauseMessage(expectedError);
+                .hasRootCauseMessage(
+                        "Numeric value (9223372036854775808) out of range of long (-9223372036854775808 - 9223372036854775807)\n" +
+                                " at [Source: (String)\"{\"time\":9223372036854775808}\"; line: 1, column: 28]"
+                );
     }
 
     @Test
@@ -98,11 +91,8 @@ public class TimeMicrosTest {
             @JsonParameter(location = "time/micros/time.ISO-8601.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -125,11 +115,8 @@ public class TimeMicrosTest {
             @JsonParameter(location = "time/micros/time.invalid.ISO-8601.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When then */
-        assertThatThrownBy(() -> mapper.asGenericDataRecord(bytes, schema))
+        assertThatThrownBy(() -> mapper.asGenericDataRecord(json, schema))
                 .isInstanceOf(DateTimeParseException.class)
                 .hasMessage("Text '12 PM' could not be parsed at index 2");
     }
@@ -147,11 +134,8 @@ public class TimeMicrosTest {
             @JsonParameter(location = "time/micros/time.zeroed.long.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
@@ -173,11 +157,8 @@ public class TimeMicrosTest {
             @JsonParameter(location = "time/micros/time.null.long.json") String json
     ) {
 
-        /* Given */
-        final byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-
         /* When */
-        final GenericData.Record record = mapper.asGenericDataRecord(bytes, schema);
+        final GenericData.Record record = mapper.asGenericDataRecord(json, schema);
 
         /* Then */
         assertThat(record)
