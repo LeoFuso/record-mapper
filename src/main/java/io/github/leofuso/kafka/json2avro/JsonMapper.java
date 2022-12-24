@@ -1,16 +1,12 @@
 package io.github.leofuso.kafka.json2avro;
 
-import java.io.OutputStream;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.apache.avro.specific.SpecificRecord;
-import org.apache.avro.specific.SpecificRecordBase;
 
 /**
  * A JsonMapper can produce {@link GenericRecord records} {@link Schema Schema-compatible} from a relaxed JSON-compatible byte array, and
