@@ -1,5 +1,9 @@
 # Record Mapper
 
+[![](https://jitpack.io/v/LeoFuso/record-mapper.svg)](https://jitpack.io/#LeoFuso/record-mapper)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.leofuso/record-mapper/badge.svg#)](https://maven-badges.herokuapp.com/maven-central/io.github.leofuso/record-mapper)
+
+
 RecordMapper provides functionality for reading and writing Avro-compatible Records to or from String JSON equivalent.
 
 It ships with two kinds of _Mappers_:
