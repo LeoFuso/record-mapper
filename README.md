@@ -99,7 +99,7 @@ class Mapper {
 }
 ```
 
-However, if you enable the **enhanced** feature, either by providing a **ByteBuddy** dependency on the classpath or by enabling via Gradle:
+However, if you enable the **enhanced** feature, either by providing a **ByteBuddy** dependency on the classpath or by enabling it via Gradle:
 
 ```groovy
 
