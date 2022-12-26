@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.leofuso.kafka.json2avro.exception.Throwables;
+import io.github.leofuso.record.mapper.exception.Throwables;
 
 public class EnhancedDecimalConversion extends Conversions.DecimalConversion {
 

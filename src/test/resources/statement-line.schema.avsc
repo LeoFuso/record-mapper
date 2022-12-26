@@ -1,7 +1,7 @@
 {
     "type": "record",
     "name": "StatementLine",
-    "namespace": "io.github.leofuso.obs.demo.events",
+    "namespace": "io.github.leofuso.record.mapper.test",
     "doc": "A Statement Line encapsulates a financial transaction.",
     "fields": [
         {

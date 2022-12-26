@@ -1,7 +1,7 @@
 {
     "type": "record",
     "name": "TimestampMillis",
-    "namespace": "io.github.leofuso.avro.tests",
+    "namespace": "io.github.leofuso.record.mapper.test",
     "doc": "A simple Record containing only a timestamp field.",
     "fields": [
         {

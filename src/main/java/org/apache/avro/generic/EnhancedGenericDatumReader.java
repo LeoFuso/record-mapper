@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import io.github.leofuso.kafka.json2avro.exception.Throwables;
+import io.github.leofuso.record.mapper.exception.Throwables;
 
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Conversion;
@@ -19,9 +19,9 @@ import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.io.ResolvingDecoder;
 
-import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_BYTES_REWRITE;
-import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_INT_REWRITE;
-import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher.READ_LONG_REWRITE;
+import static io.github.leofuso.record.mapper.instrument.InterceptorDispatcher.READ_BYTES_REWRITE;
+import static io.github.leofuso.record.mapper.instrument.InterceptorDispatcher.READ_INT_REWRITE;
+import static io.github.leofuso.record.mapper.instrument.InterceptorDispatcher.READ_LONG_REWRITE;
 
 /**
  *  {@link DatumReader} for generic Java objects.
