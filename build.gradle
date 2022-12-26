@@ -1,13 +1,16 @@
 plugins {
     id 'java-library'
+
     id 'signing'
     id 'maven-publish'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 
     id 'com.github.davidmc24.gradle.plugin.avro' version '1.5.0'
 }
 
 group 'io.github.leofuso'
 version '1.0'
+description 'RecordMapper provides functionality for reading and writing Avro-compatible Records to or from String JSON equivalent.'
 
 repositories {
     mavenCentral()
@@ -51,4 +54,81 @@ test {
     forkEvery = 1
     systemProperty('junit.jupiter.execution.parallel.enabled', true)
     systemProperty('junit.jupiter.execution.parallel.mode.default', 'concurrent')
+}
+
+publishing {
+    publications {
+        sonatype(MavenPublication) {
+            from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = group + ':record-mapper'
+                description = 'RecordMapper provides functionality for reading and writing Avro-compatible Records to or from String JSON equivalent.'
+                url = 'https://github.com/LeoFuso/record-mapper'
+                packaging 'jar'
+                issueManagement {
+                    system = 'GitHub Issue Tracking'
+                    url = 'https://github.com/LeoFuso/record-mapper/issues'
+                }
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'leofuso'
+                        name = 'Leonardo Fuso Nuzzo'
+                        email = 'leonardofusonuzzo@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/leofuso/record-mapper.git'
+                    developerConnection = 'scm:git:git@github.com:leofuso/record-mapper.git'
+                    url = 'https://github.com/LeoFuso/record-mapper'
+                }
+            }
+        }
+    }
+    repositories {
+        var isSnapshot = version.endsWith('SNAPSHOT')
+        if (isSnapshot) {
+            maven {
+                url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+                name = 'SonatypeSnapshot'
+                credentials(PasswordCredentials.class)
+            }
+        } else {
+            maven {
+                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+                name = 'SonatypeRelease'
+                credentials(PasswordCredentials.class)
+            }
+        }
+    }
+}
+
+/*
+ * Commented out for JitPack's automation, necessary for Sonatype releases.
+ *
+ * signing { sign publishing.publications }
+*/
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri('https://s01.oss.sonatype.org/service/local/')
+            snapshotRepositoryUrl = uri('https://s01.oss.sonatype.org/content/repositories/snapshots/')
+            username = SonatypeReleaseUsername
+            password = SonatypeReleasePassword
+        }
+    }
 }
