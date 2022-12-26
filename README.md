@@ -45,7 +45,7 @@ The minimal Gradle configuration is as follows:
 
 dependencies {
     implementation 'org.apache.avro:avro:1.11.1'
-    implementation 'io.github.leofuso.record-mapper:1.0.0'
+    implementation 'io.github.leofuso:record-mapper:1.0.0'
 }
 
 ```
@@ -55,7 +55,7 @@ By applying the _Enhanced_ strategy, either by Gradle or by providing a **ByteBu
 ```groovy
 dependencies {
     implementation 'org.apache.avro:avro:1.11.1'
-    implementation ('io.github.leofuso.record-mapper:1.0.0') {
+    implementation ('io.github.leofuso:record-mapper:1.0.0') {
         capabilities {
             requireCapability 'io.github.leofuso:record-mapper-enhanced'
         }
