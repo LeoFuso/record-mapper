@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'io.github.leofuso'
-version '1.0'
+version '1.0.1-SNAPSHOT'
 description 'RecordMapper provides functionality for reading and writing Avro-compatible Records to or from String JSON equivalent.'
 
 repositories {
