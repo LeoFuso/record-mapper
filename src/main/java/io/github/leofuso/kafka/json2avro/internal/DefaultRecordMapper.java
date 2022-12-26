@@ -19,27 +19,39 @@ import org.apache.avro.specific.SpecificData;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
 
-import io.github.leofuso.kafka.json2avro.DatumFactory;
-import io.github.leofuso.kafka.json2avro.JsonMapper;
+import io.github.leofuso.kafka.json2avro.RecordMapper;
+import io.github.leofuso.kafka.json2avro.RecordReaderFactory;
+import io.github.leofuso.kafka.json2avro.RecordWriterFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DefaultJsonMapper implements JsonMapper {
+public class DefaultRecordMapper implements RecordMapper {
 
-    private final DatumFactory datumFactory;
-    private final ObjectMapper mapper;
+    private final JsonMapper jsonMapper;
 
-    public DefaultJsonMapper(final DatumFactory datumFactory, final ObjectMapper mapper) {
-        this.datumFactory = Objects.requireNonNull(datumFactory, "DatumFactory [datumFactory] is required.");
-        this.mapper = Objects.requireNonNull(mapper, "ObjectMapper [mapper] is required.");
+    private final RecordReaderFactory readerFactory;
+    private final RecordWriterFactory writerFactory;
+
+    public DefaultRecordMapper(JsonMapper mapper, RecordWriterFactory writerFactory, RecordReaderFactory readerFactory) {
+        this.jsonMapper = Objects.requireNonNull(mapper, JsonMapper.class.getSimpleName() + " [mapper] is required.");
+        this.writerFactory = Objects.requireNonNull(
+                writerFactory,
+                RecordWriterFactory.class.getSimpleName() + " [writerFactory] is required."
+        );
+        this.readerFactory = Objects.requireNonNull(
+                readerFactory,
+                RecordReaderFactory.class.getSimpleName() + " [readerFactory] is required."
+        );
     }
 
     @Override
     public ByteBuffer serialize(final String json, final Schema schema) {
+        Objects.requireNonNull(json, String.class.getSimpleName() + " [json] is required.");
+        Objects.requireNonNull(schema, Schema.class.getSimpleName() + " [schema] is required.");
 
         final GenericData.Record record = asGenericDataRecord(json, schema);
 
@@ -48,7 +60,7 @@ public class DefaultJsonMapper implements JsonMapper {
             final EncoderFactory encoderFactory = EncoderFactory.get();
             final BinaryEncoder encoder = encoderFactory.directBinaryEncoder(outputStream, null);
 
-            final DatumWriter<GenericData.Record> writer = datumFactory.createWriter(schema);
+            final DatumWriter<GenericData.Record> writer = writerFactory.produceWriter(schema);
             writer.write(record, encoder);
             encoder.flush();
 
@@ -62,18 +74,21 @@ public class DefaultJsonMapper implements JsonMapper {
 
     @Override
     public GenericData.Record asGenericDataRecord(final String json, final Schema schema) {
+        Objects.requireNonNull(json, String.class.getSimpleName() + " [json] is required.");
+        Objects.requireNonNull(schema, Schema.class.getSimpleName() + " [schema] is required.");
+
         try {
 
-            final ObjectReader reader = mapper.reader();
+            final ObjectReader reader = jsonMapper.reader();
             final JsonNode sourceNode = reader.readTree(json);
 
             final JsonNode compatibleNode = toCompatibleNode(sourceNode, schema);
-            final String datumInput = mapper.writeValueAsString(compatibleNode);
+            final String datumInput = jsonMapper.writeValueAsString(compatibleNode);
 
             final DecoderFactory decoderFactory = DecoderFactory.get();
             final JsonDecoder decoder = decoderFactory.jsonDecoder(schema, datumInput);
 
-            final DatumReader<GenericData.Record> datumReader = datumFactory.createReader(schema);
+            final DatumReader<GenericData.Record> datumReader = readerFactory.produceReader(schema);
             return datumReader.read(null, decoder);
 
         } catch (final IOException e) {
@@ -87,7 +102,7 @@ public class DefaultJsonMapper implements JsonMapper {
         if (isNotRecord) {
             return sourceNode.deepCopy();
         }
-        final ObjectNode targetNode = mapper.createObjectNode();
+        final ObjectNode targetNode = jsonMapper.createObjectNode();
         for (final Schema.Field field : schema.getFields()) {
 
             final String name = field.name();
@@ -109,6 +124,9 @@ public class DefaultJsonMapper implements JsonMapper {
 
     @Override
     public <T extends SpecificRecord> T asRecord(final String json, Class<T> type) {
+        Objects.requireNonNull(json, String.class.getSimpleName() + " [json] is required.");
+        Objects.requireNonNull(type, Class.class.getSimpleName() + " [type] is required.");
+
         try {
 
             final SpecificData specificData = SpecificData.getForClass(type);
@@ -119,7 +137,7 @@ public class DefaultJsonMapper implements JsonMapper {
             final byte[] array = buffer.array();
             final BinaryDecoder decoder = decoderFactory.binaryDecoder(array, 0, array.length, null);
 
-            final DatumReader<T> reader = datumFactory.createReader(type);
+            final DatumReader<T> reader = readerFactory.produceReader(type);
             return reader.read(null, decoder);
 
         } catch (final IOException e) {
@@ -130,16 +148,18 @@ public class DefaultJsonMapper implements JsonMapper {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends SpecificRecord> JsonNode asJsonNode(final T record) {
+        Objects.requireNonNull(record, " T [record] is required.");
+
         try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
             final Schema schema = record.getSchema();
-            final SpecificDatumWriter<T> writer = datumFactory.createWriter((Class<T>) record.getClass());
+            final SpecificDatumWriter<T> writer = writerFactory.produceWriter((Class<T>) record.getClass());
 
             final NoWrappingJsonEncoder encoder = new NoWrappingJsonEncoder(schema, outputStream);
             writer.write(record, encoder);
 
             encoder.flush();
-            return mapper.readTree(outputStream.toByteArray());
+            return jsonMapper.readTree(outputStream.toByteArray());
 
         } catch (final IOException e) {
             throw new AvroMappingException("Unable to parse to JsonNode.", e);
@@ -148,16 +168,18 @@ public class DefaultJsonMapper implements JsonMapper {
 
     @Override
     public JsonNode asJsonNode(final GenericData.Record record) {
+        Objects.requireNonNull(record, GenericData.Record.class.getSimpleName() + " [record] is required.");
+
         try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
             final Schema schema = record.getSchema();
-            final DatumWriter<GenericData.Record> writer = datumFactory.createWriter(schema);
+            final DatumWriter<GenericData.Record> writer = writerFactory.produceWriter(schema);
 
             final NoWrappingJsonEncoder encoder = new NoWrappingJsonEncoder(schema, outputStream);
             writer.write(record, encoder);
 
             encoder.flush();
-            return mapper.readTree(outputStream.toByteArray());
+            return jsonMapper.readTree(outputStream.toByteArray());
 
         } catch (final IOException e) {
             throw new AvroMappingException("Unable to parse to JsonNode.", e);

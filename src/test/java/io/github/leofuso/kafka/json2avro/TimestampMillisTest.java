@@ -24,11 +24,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ExtendWith({ SchemaParameterResolver.class, JsonParameterResolver.class })
 public class TimestampMillisTest {
 
-    private static JsonMapper mapper;
+    private static RecordMapper mapper;
 
     @BeforeAll
     static void setUp() {
-        final JsonMapperFactory mapperFactory = JsonMapperFactory.get();
+        final RecordMapperFactory mapperFactory = RecordMapperFactory.get();
         mapper = mapperFactory.produce();
     }
 

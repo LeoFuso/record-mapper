@@ -26,31 +26,31 @@ import static io.github.leofuso.kafka.json2avro.instrument.InterceptorDispatcher
 /**
  *  {@link DatumReader} for generic Java objects.
  *  <p>
- *  Relaxed implementation accepts relaxed values, such as BigDecimal('9.25') instead of the canonical string only version.
+ *  Enhanced implementation accepts relaxed values, such as BigDecimal('9.25') instead of the canonical string only version.
  */
-public class RelaxedGenericDatumReader<D> extends GenericDatumReader<D> {
+public class EnhancedGenericDatumReader<D> extends GenericDatumReader<D> {
 
-    public RelaxedGenericDatumReader() {}
+    public EnhancedGenericDatumReader() {}
 
     /**
      * Construct where the writer's and reader's schemas are the same.
      */
-    public RelaxedGenericDatumReader(final Schema schema) {
+    public EnhancedGenericDatumReader(final Schema schema) {
         super(schema);
     }
 
     /**
      * Construct given writer's and reader's schema.
      */
-    public RelaxedGenericDatumReader(final Schema writer, final Schema reader) {
+    public EnhancedGenericDatumReader(final Schema writer, final Schema reader) {
         super(writer, reader);
     }
 
-    public RelaxedGenericDatumReader(final Schema writer, final Schema reader, final GenericData data) {
+    public EnhancedGenericDatumReader(final Schema writer, final Schema reader, final GenericData data) {
         super(writer, reader, data);
     }
 
-    protected RelaxedGenericDatumReader(final GenericData data) {
+    protected EnhancedGenericDatumReader(final GenericData data) {
         super(data);
     }
 

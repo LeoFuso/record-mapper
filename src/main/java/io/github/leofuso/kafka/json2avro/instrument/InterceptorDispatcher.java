@@ -19,17 +19,17 @@ import net.bytebuddy.implementation.bind.annotation.This;
 public class InterceptorDispatcher {
 
     /**
-     * An additional method name proving a relaxed parser for expected Byte Array values
+     * An additional method name proving an enhanced parser for expected Byte Array values
      */
     public static final String READ_BYTES_REWRITE = "$$__readBytes__rewrite__$$";
 
     /**
-     * An additional method name proving a relaxed parser for expected Long values
+     * An additional method name proving an enhanced parser for expected Long values
      */
     public static final String READ_LONG_REWRITE = "$$__readLong__rewrite__$$";
 
     /**
-     * An additional method name proving a relaxed parser for expected Integer values
+     * An additional method name proving an enhanced parser for expected Integer values
      */
     public static final String READ_INT_REWRITE = "$$__readInt__rewrite__$$";
 

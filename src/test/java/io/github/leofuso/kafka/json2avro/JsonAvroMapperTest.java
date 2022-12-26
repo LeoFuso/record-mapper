@@ -20,7 +20,7 @@ import io.github.leofuso.kafka.json2avro.fixture.JsonParameterResolver;
 import io.github.leofuso.kafka.json2avro.fixture.SchemaParameterResolver;
 import io.github.leofuso.kafka.json2avro.fixture.annotation.JsonParameter;
 import io.github.leofuso.kafka.json2avro.fixture.annotation.SchemaParameter;
-import io.github.leofuso.kafka.json2avro.internal.ObjectMapperFactory;
+import io.github.leofuso.kafka.json2avro.internal.JsonMapperFactory;
 import io.github.leofuso.obs.demo.events.Operation;
 import io.github.leofuso.obs.demo.events.StatementLine;
 
@@ -36,11 +36,11 @@ import static org.assertj.core.api.InstanceOfAssertFactories.type;
 @ExtendWith({ SchemaParameterResolver.class, JsonParameterResolver.class })
 class JsonAvroMapperTest {
 
-    private static JsonMapper mapper;
+    private static RecordMapper mapper;
 
     @BeforeAll
     static void setUp() {
-        final JsonMapperFactory mapperFactory = JsonMapperFactory.get();
+        final RecordMapperFactory mapperFactory = RecordMapperFactory.get();
         mapper = mapperFactory.produce();
     }
 
@@ -180,7 +180,7 @@ class JsonAvroMapperTest {
     ) throws JsonProcessingException {
 
         /* Given */
-        final ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
+        final ObjectMapper objectMapper = JsonMapperFactory.getInstance();
         final JsonNode expectedJsonNode = objectMapper.readTree(canonicalJson);
         final GenericData.Record record = mapper.asGenericDataRecord(relaxedJson, schema);
 
@@ -206,7 +206,7 @@ class JsonAvroMapperTest {
     ) throws JsonProcessingException {
 
         /* Given */
-        final ObjectMapper objectMapper = ObjectMapperFactory.getInstance();
+        final ObjectMapper objectMapper = JsonMapperFactory.getInstance();
         final JsonNode expectedJsonNode = objectMapper.readTree(canonicalJson);
 
         final StatementLine record = mapper.asRecord(relaxedJson, StatementLine.class);

@@ -23,14 +23,14 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 /**
  * A utility class wrapping a generic ObjectMapper singleton.
  */
-public class ObjectMapperFactory {
+public class JsonMapperFactory {
 
-    private static ObjectMapper INSTANCE;
+    private static JsonMapper INSTANCE;
 
     /**
      * @return a lazily created singleton instance of {@link ObjectMapper}.
      */
-    public static ObjectMapper getInstance() {
+    public static JsonMapper getInstance() {
         if (INSTANCE == null) {
             INSTANCE = JsonMapper.builder()
                     .enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS)

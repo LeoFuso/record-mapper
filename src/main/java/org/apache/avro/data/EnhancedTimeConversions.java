@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import org.apache.avro.LogicalType;
 import org.apache.avro.Schema;
 
-public class RelaxedTimeConversions extends TimeConversions {
+public class EnhancedTimeConversions extends TimeConversions {
 
     public static final class TimestampMillisConversion extends TimeConversions.TimestampMillisConversion {
 

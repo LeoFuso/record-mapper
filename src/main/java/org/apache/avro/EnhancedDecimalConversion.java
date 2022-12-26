@@ -6,13 +6,14 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.logging.log4j.core.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
+import io.github.leofuso.kafka.json2avro.exception.Throwables;
 
-    private static final Logger logger = LoggerFactory.getLogger(RelaxedDecimalConversion.class);
+public class EnhancedDecimalConversion extends Conversions.DecimalConversion {
+
+    private static final Logger logger = LoggerFactory.getLogger(EnhancedDecimalConversion.class);
 
     @Override
     public BigDecimal fromBytes(final ByteBuffer value, final Schema schema, final LogicalType type) {
@@ -35,8 +36,7 @@ public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
             }
             return super.fromBytes(value, schema, type);
         } catch (final InvocationTargetException e) {
-            final Throwable throwable = e.getTargetException();
-            Throwables.rethrow(throwable);
+            Throwables.handleReflectionException(e);
             return null; /* Unreacheable code */
         } catch (final Exception e) {
             final String errorMessage = "Conversion failure while converting from Byte[] %s to BigDecimal Logical type.".formatted(value);
@@ -53,8 +53,7 @@ public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
             return decimal;
 
         } catch (final InvocationTargetException e) {
-            final Throwable throwable = e.getTargetException();
-            Throwables.rethrow(throwable);
+            Throwables.handleReflectionException(e);
             return null; /* Unreacheable code */
         } catch (final Exception e) {
             final String errorMessage = "Conversion failure while converting from Double %s to BigDecimal Logical type.".formatted(value);
@@ -74,8 +73,7 @@ public class RelaxedDecimalConversion extends Conversions.DecimalConversion {
             return decimal;
 
         } catch (final InvocationTargetException e) {
-            final Throwable throwable = e.getTargetException();
-            Throwables.rethrow(throwable);
+            Throwables.handleReflectionException(e);
             return null; /* Unreacheable code */
         } catch (final Exception e) {
             final String errorMessage = "Conversion failure while converting from Integer %s to BigDecimal Logical type.".formatted(value);
